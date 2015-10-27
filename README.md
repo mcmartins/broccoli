@@ -1,4 +1,6 @@
-# Parallel Jobs
+# Broccoli
+
+<img src="https://github.com/mcmartins/parallel-jobs/blob/master/docs/broccoli.png" alt="logo" width="200px" height="200px">
 
 # README
 
@@ -21,6 +23,12 @@ The input JSON/XML should include information such as:
 ## Integration with WebGAP
 
 A node.js module should be produced in order to wrap the python tool. This tool will be used as an asynchronous job executor.
+
+# Diagrams
+
+Application Flow Diagram:
+
+![alt text](https://github.com/mcmartins/parallel-jobs/blob/master/docs/flow.png)
 
 # LICENSE
 

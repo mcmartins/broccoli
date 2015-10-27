@@ -1,0 +1,21 @@
+{
+  "jobName": "Boolean Algebra 2-Basis",
+  "workingDir": "/tmp/",
+  "timeout": 3600,
+  "tasks": [
+    {
+      "taskName": "Get guiding interpretation",
+      "command": "mace4 -n6 -m -1 -f BA2-interp.in | get_interps | isofilter ignore_constants wrap > BA2-interp.out",
+      "guidance": [
+        {
+          "taskName": "Job with guidance (20 seconds)",
+          "command": "prover9 -f BA2.in BA2-interp.out > BA2.out"
+        }
+      ]
+    },
+    {
+      "taskName": "Job without guidance (46 seconds)",
+      "command": "prover9 -f BA2.in > BA2-base.out"
+    }
+  ]
+}
