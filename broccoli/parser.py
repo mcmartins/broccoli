@@ -1,5 +1,4 @@
 import json
-import sys
 import os.path
 import logging
 from job import Job
@@ -20,6 +19,9 @@ from task import Task
 
 
 def parse(arg):
+    """
+    TODO validate the input with the schema
+    """
     if os.path.isfile(arg):
         config = json.loads(open(arg).read().decode("utf-8"))
     else:
@@ -48,6 +50,3 @@ def __resolve_guidance(parent, guidance):
             return __resolve_guidance(task, guidanceTask['guidance'])
     return parent
 
-
-if __name__ == "__main__":
-    job = parse(sys.argv[1])
