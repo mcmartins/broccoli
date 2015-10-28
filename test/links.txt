@@ -1,2 +1,0 @@
-https://www.cs.unm.edu/~mccune/mace4/examples/2009-11A/semantics/BA2-interp.in
-https://www.cs.unm.edu/~mccune/mace4/examples/2009-11A/semantics/BA2.in
