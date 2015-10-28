@@ -4,22 +4,21 @@
   "timeout": 60,
   "tasks": [
     {
-      "taskName": "Get guiding interpretation",
+      "taskName": "T1 - Get guiding interpretation",
       "wait": false,
       "command": "mace4 -n6 -m -1 -f BA2-interp.in | get_interps | isofilter ignore_constants wrap > BA2-interp.out",
       "guidance": [
         {
-          "taskName": "Job with guidance (20 seconds)",
+          "taskName": "T1.1 - Job with guidance (20 seconds)",
           "wait": false,
           "command": "prover9 -f BA2.in BA2-interp.out > BA2.out"
         }
       ]
     },
     {
-      "taskName": "Job without guidance (46 seconds)",
+      "taskName": "T2 - Job without guidance (46 seconds)",
       "wait": false,
-      "command": "prover9 -f BA2.in > BA2-base.out",
-      "guidance": []
+      "command": "prover9 -f BA2.in > BA2-base.out"
     }
   ]
 }

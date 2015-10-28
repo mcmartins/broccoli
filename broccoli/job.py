@@ -40,9 +40,11 @@ class Job:
         self.tasks.append(task)
 
     """
-        Get Tasks in the queue
+        Pop Tasks
 
         :return tasks
     """
-    def get_tasks(self):
-        return self.tasks
+    def pop_tasks(self):
+        temp = self.tasks
+        self.tasks = []
+        return temp

@@ -44,10 +44,12 @@ class Task:
         self.guidance.append(task)
 
     """
-        Get Sub Tasks (Guidance) in the queue
+        Pop Guidance Tasks
 
         :return tasks
     """
 
-    def get_guidance(self):
-        return self.guidance
+    def pop_guidance(self):
+        temp = self.guidance
+        self.guidance = []
+        return temp

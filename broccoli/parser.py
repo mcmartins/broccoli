@@ -1,6 +1,7 @@
 import json
 import os.path
 import logging
+import pprint
 from job import Job
 from task import Task
 
@@ -38,7 +39,6 @@ def parse(arg):
             broccoli_job_task = __resolve_guidance(broccoli_job_task, task['guidance'])
         broccoli_job.add_task(broccoli_job_task)
     logging.info('New Job created...')
-    logging.debug(broccoli_job)
     return broccoli_job
 
 

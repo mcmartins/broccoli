@@ -1,4 +1,6 @@
+import os
 import shlex
+import atexit
 import subprocess
 import logging
 import signal
@@ -21,46 +23,51 @@ class Runner:
     # these is a static private variable shared among all instances of the monitor
     # this way we can keep track of everything that is running
     # this is useful to kill running processes when we reach a solution
-    __running_processes = []
+    running_processes = []
+
+    @staticmethod
+    def terminate():
+        for process in Runner.running_processes:
+            logging.info('Killing running process with pid ' + str(process.pid))
+            os.killpg(process.pid, signal.SIGTERM)
+        logging.info('Bye Bye.')
 
     def __init__(self, job):
+        # change working directory
+        os.chdir(job.wd)
+        # ensure timeout
+        signal.signal(signal.SIGALRM, self.__timeout)
+        signal.alarm(job.timeout)
+        # ensure nothing stays running if the tool blows for some reason
+        atexit.register(Runner.terminate)
         self.job = job
         self.tasks = deque([])
-        self.add_tasks(job.get_tasks())
-        signal.signal(signal.SIGALRM, self.__timeout)
-        signal.alarm(self.job.timeout)
+        logging.info('Runner - Running Tasks for Job: ' + str(job.name))
+        self.add_tasks(job.pop_tasks())
 
     def __run(self):
         tasks_to_monitor = []
         while True:
             try:
                 task = self.tasks.popleft()
-                command = shlex.split(task.command)
-                process = subprocess.Popen(command, stdin=None, stdout=subprocess.PIPE, stderr=None)
+                logging.info('Runner - Starting processing Task: ' + str(task.name))
+                command = task.command  # shlex.split(task.command)
+                logging.debug('Runner - Task Command: ' + str(command))
+                process = subprocess.Popen(command, cwd=self.job.wd, stdin=subprocess.PIPE,
+                                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                           shell=True, preexec_fn=os.setsid)
                 # (stdout, stderr) = process.communicate()
-                process.communicate()
-                self.__running_processes.append(process)
+                Runner.running_processes.append(process)
                 tasks_to_monitor.append((task, process))
-                logging.debug('Starting processing the following Task: ' + task)
             except IndexError:
                 break
         monitor = Monitor(self)
         monitor.start(tasks_to_monitor)
 
     def add_tasks(self, tasks):
-        self.tasks.append(tasks)
+        self.tasks.extend(tasks)
         self.__run()
 
     def __timeout(self, signum, frame):
-        logging.info('Processing timed out...')
-        self.__exit_gracefully()
-
-    def __exit_gracefully(self):
-        self.__kill_all()
-        logging.info('Processing finished...')
-        exit(0)
-
-    def __kill_all(self):
-        for process in self.__running_processes:
-            logging.info('Killing running process: ' + process.id)
-            process.kill()
+        logging.info('Processing timed out after ' + str(self.job.timeout) + ' seconds.')
+        exit(5)

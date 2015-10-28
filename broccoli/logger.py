@@ -1,17 +1,20 @@
 import logging
 
 """
-    broccoli.logger
+    broccoli.logging
     ~~~~~~~~~~~~~
 
-    Logging configuration.
+    Default logging configuration.
 
     :copyright: 2015 Manuel Martins, see AUTHORS for more details
     :license: Apache 2.0, see LICENSE for more details
 """
 
 
-def main(job_name):
-    logging.basicConfig(format='[%(levelname)s] - %(asctime)s: %(message)s',
-                        filename='Broccoli-Job-' + job_name + '.log', level=logging.DEBUG)
-    logging.info('Started')
+def initialize(job, verbose):
+    handler = logging.FileHandler(job.wd + '/Broccoli-Job-' + str(job.id) + '.log')
+    formatter = logging.Formatter('%(asctime)s - [%(levelname)s] - %(message)s')
+    handler.setFormatter(formatter)
+    logging.getLogger().addHandler(handler)
+    if verbose:
+        logging.getLogger().setLevel(logging.DEBUG)
