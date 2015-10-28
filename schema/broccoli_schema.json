@@ -1,0 +1,92 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "https://portal.webgap.eu/alpaca/schemas/broccoli.json",
+  "title": "Broccoli schema definition",
+  "description": "This document describes the possible ways to interact with the broccoli Job Executor system",
+  "additionalProperties": false,
+  "type": "object",
+  "definitions": {
+    "task": {
+      "title": "Describes a Task",
+      "description": "A Task is a simple process holding a name, a command and following Sub Tasks (Guidance Tasks)",
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "taskName": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Task Name",
+          "description": "Name of the Task"
+        },
+        "wait": {
+          "type": "boolean",
+          "title": "Wait for other Tasks completion",
+          "description": "Set it to true if this Task should wait for others to complete before moving on."
+        },
+        "command": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Command",
+          "description": "The full command to execute including args"
+        },
+        "guidance": {
+          "type": "array",
+          "title": "Guidance Tasks",
+          "description": "Guidance defines the Sub Tasks to execute after the current Task finishes",
+          "items": {
+            "description": "A Task is a simple process holding a name, a command and following Sub Tasks (Guidance Tasks)",
+            "title": "Guidance Task",
+            "$ref": "#/definitions/task",
+            "additionalProperties": false
+          },
+          "additionalItems": false
+        }
+      }
+    }
+  },
+  "properties": {
+    "jobName": {
+      "type": "string",
+      "minLength": 1,
+      "title": "Job Name",
+      "description": "The Job Name is used to identify the Job running"
+    },
+    "workingDir": {
+      "type": "string",
+      "minLength": 1,
+      "title": "Working directory",
+      "description": "The Working directory where the Job shall run"
+    },
+    "timeout": {
+      "type": "integer",
+      "multipleOf": 1,
+      "maximum": 9999999999,
+      "minimum": 1,
+      "exclusiveMaximum": false,
+      "exclusiveMinimum": false,
+      "title": "Timeout",
+      "description": "The Timeout in seconds for the executor to trigger the kill"
+    },
+    "tasks": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": false,
+      "additionalItems": false,
+      "title": "Tasks",
+      "description": "The Tasks to execute within this Job",
+      "name": "tasks",
+      "items": {
+        "description": "A Task is a simple process holding a name, a command and following Sub Tasks (Guidance Tasks)",
+        "title": "Task",
+        "$ref": "#/definitions/task",
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "jobName",
+    "workingDir",
+    "timeout",
+    "tasks"
+  ]
+}

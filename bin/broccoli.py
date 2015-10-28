@@ -11,10 +11,9 @@
     :license: Apache 2.0, see LICENSE for more details
 """
 import sys
-from broccoli.builder import Builder
 from broccoli.runner import Runner
 
 if __name__ == "__main__":
-    builder = Builder(sys.argv[1])
-    job = builder.build()
-    Runner.run(job)
+    job = parser.parse(sys.argv[1])
+    runner = Runner(job)
+    runner.run()
