@@ -44,9 +44,11 @@ Job Diagram
 
 # Test
 
-## Job
+The following Job is being used as TestCase:
 
 ![alt text](https://github.com/mcmartins/parallel-jobs/blob/master/docs/test_job.png)
+
+## MISSING TESTS IMPLEMENTATION
 
 # LICENSE
 
