@@ -30,7 +30,7 @@ class Runner:
                 process = subprocess.Popen(command, stdin=None, stdout=subprocess.PIPE, stderr=None)
                 # (stdout, stderr) = process.communicate()
                 process.communicate()
-                tasks_to_monitor.append((task,process))
+                tasks_to_monitor.append((task, process))
             except IndexError:
                 break
         monitor = Monitor(self)

@@ -1,4 +1,3 @@
-from collections import deque
 import uuid
 
 """
@@ -32,7 +31,7 @@ class Task:
         self.name = name
         self.command = command
         self.wait = wait
-        self.guidance = deque([])
+        self.guidance = []
 
     """
         Add Sub Task (Guidance)
@@ -43,15 +42,6 @@ class Task:
     def add_guidance(self, task):
         task.parent = self
         self.guidance.append(task)
-
-    """
-        Get next Sub Task (Guidance) in the queue
-
-        :return task
-    """
-
-    def pop_guidance(self):
-        return self.guidance.popleft()
 
     """
         Get Sub Tasks (Guidance) in the queue

@@ -1,4 +1,3 @@
-from collections import deque
 import uuid
 
 """
@@ -29,7 +28,7 @@ class Job:
         self.name = name
         self.wd = wd
         self.timeout = timeout
-        self.tasks = deque([])
+        self.tasks = []
 
     """
         Add Tasks to the Job
@@ -39,15 +38,6 @@ class Job:
 
     def add_task(self, task):
         self.tasks.append(task)
-
-    """
-        Get Task in the queue
-
-        :return task
-    """
-
-    def pop_task(self):
-        return self.tasks.popleft()
 
     """
         Get Tasks in the queue
