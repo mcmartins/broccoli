@@ -13,10 +13,6 @@ import logging
 
 
 class Monitor:
-    # these is a static private variable shared among all instances of the monitor
-    # this way we can keep track of everything that is running
-    # this is useful to kill running processes when we reach a solution
-    __running_processes = []
 
     def __init__(self, runner):
         self.runner = runner
@@ -28,7 +24,6 @@ class Monitor:
 
     def start(self, tasks):
         self.tasks.append(tasks)
-        self.__running_processes.append(process for (task, process) in tasks)
         logging.info('Starting monitoring the following tasks: ' + tasks)
         # start monitor loop
         self.__monitor()
@@ -41,7 +36,7 @@ class Monitor:
                     if return_code is not None:
                         # process finished
                         self.tasks.remove((task, process))
-                        self.__running_processes.remove(process)
+                        self.runner.__running_processes.remove(process)
                         if return_code >= 0:
                             # task finished successfully
                             if task.wait:
@@ -54,7 +49,7 @@ class Monitor:
                                 if task.get_guidance:
                                     self.runner.add_tasks(task.get_guidance())
                                 else:
-                                    self.__exit_gracefully()
+                                    self.runner.__exit_gracefully()
                         else:
                             # failed tasks goes here
                             self.failed_tasks.append((task, process))
@@ -62,7 +57,7 @@ class Monitor:
                                 # hmmm this task seems to be waiting for the output of another at the same level
                                 # the most probable scenario is that it won't work from here on
                                 # better to kill this now
-                                self.__exit_gracefully()
+                                self.runner.__exit_gracefully()
                             else:
                                 # hmmm we cannot proceed to the guidance tasks because this one failed
                                 # lets see if we can still proceed
@@ -72,7 +67,7 @@ class Monitor:
                                 else:
                                     # seems we were waiting for this one to complete
                                     # better to kill this now
-                                    self.__exit_gracefully()
+                                    self.runner.__exit_gracefully()
             else:
                 # are there tasks waiting for others to finish?
                 if self.waiting_tasks:
@@ -82,13 +77,3 @@ class Monitor:
                 # this branch is over no need to monitor anymore
                 # a new monitor is created for each branch of tasks
                 break
-
-    def __exit_gracefully(self):
-        self.__kill_all()
-        logging.info('Processing finished...')
-        exit(0)
-
-    def __kill_all(self):
-        for process in self.__running_processes:
-            logging.info('Killing running process: ' + process.id)
-            process.kill()

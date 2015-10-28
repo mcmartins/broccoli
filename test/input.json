@@ -1,7 +1,7 @@
 {
   "jobName": "Boolean Algebra 2-Basis",
   "workingDir": "/tmp/",
-  "timeout": 3600,
+  "timeout": 60,
   "tasks": [
     {
       "taskName": "Get guiding interpretation",
