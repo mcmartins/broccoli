@@ -6,19 +6,19 @@
     {
       "taskName": "T1 - Get guiding interpretation",
       "wait": false,
-      "command": "mace4 -n6 -m -1 -f BA2-interp.in | get_interps | isofilter ignore_constants wrap > BA2-interp.out",
+      "command": "/home/mcmartins/Tests/broccoli/test/LADR-2009-11A/bin/mace4 -n6 -m -1 -f BA2-interp.in | get_interps | isofilter ignore_constants wrap > BA2-interp.out",
       "guidance": [
         {
-          "taskName": "T1.1 - Job with guidance (20 seconds)",
+          "taskName": "T1.1 - Task with guidance (20 seconds)",
           "wait": false,
-          "command": "prover9 -f BA2.in BA2-interp.out > BA2.out"
+          "command": "/home/mcmartins/Tests/broccoli/test/LADR-2009-11A/bin/prover9 -f BA2.in BA2-interp.out > BA2.out"
         }
       ]
     },
     {
-      "taskName": "T2 - Job without guidance (46 seconds)",
+      "taskName": "T2 - Task without guidance (46 seconds)",
       "wait": false,
-      "command": "prover9 -f BA2.in > BA2-base.out"
+      "command": "/home/mcmartins/Tests/broccoli/test/LADR-2009-11A/bin/prover9 -f BA2.in > BA2-base.out"
     }
   ]
 }

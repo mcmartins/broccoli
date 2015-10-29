@@ -6,8 +6,8 @@ import uuid
 
     A Task is a process that runs in the background.
     A Task can have Sub Tasks (Guidance).
-    All Sub Tasks (Guidances) have a parent assigned.
-    A Task is considered finished when all Sub Tasks (Guindances) are finished.
+    All Sub Tasks (Guidance's) have a parent assigned.
+    A Task is considered finished when all Sub Tasks (Guidance's) are finished.
 
     See 'broccoli_schema.json' for details on usage.
 

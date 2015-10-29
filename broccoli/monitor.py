@@ -1,3 +1,4 @@
+import uuid
 import logging
 
 """
@@ -14,6 +15,7 @@ import logging
 
 class Monitor:
     def __init__(self, runner):
+        self.id = uuid.uuid4()
         self.runner = runner
         # tasks management variables
         self.tasks = []
@@ -23,7 +25,7 @@ class Monitor:
 
     def start(self, tasks):
         self.tasks.extend(tasks)
-        logging.info('Monitor - Starting...')
+        logging.info('Monitor - Starting monitor ID: ' + str(self.id))
         logging.debug(
             'Monitor - Monitoring the following task(s): ' + str([task.name for (task, process) in tasks]))
         # start monitor loop
@@ -42,7 +44,7 @@ class Monitor:
                         if return_code == 0:
                             # task finished successfully
                             logging.info('Monitor - FINISHED - Task: ' + task.name)
-                            logging.debug('Monitor - Shell output: ' + str(std_out))
+                            logging.debug('Monitor - Shell output: ' + str(std_err))
                             if task.wait:
                                 # should we wait for others to finish?
                                 logging.info(
@@ -61,17 +63,17 @@ class Monitor:
                         else:
                             # failed tasks goes here
                             logging.info('Monitor - FINISHED - Task Failure: ' + task.name)
-                            logging.debug('Monitor - Shell output: ' + str(std_out))
+                            logging.debug('Monitor - Shell output: ' + str(std_err))
                             self.failed_tasks.append((task, process))
                             if task.wait:
-                                # hmmm this task seems to be waiting for the output of another at the same level
-                                # the most probable scenario is that it won't work from here on
-                                # better to kill this now
+                                # hum this task failed and it seems to be waiting for
+                                # the output of another at the same level, the most probable scenario
+                                # is that it won't work from here on. Better to kill the Job now.
                                 logging.info('Monitor - Job Finished with errors.')
                                 exit(1)
                             else:
-                                # hmmm we cannot proceed to the guidance tasks because this one failed
-                                # lets see if we can still proceed
+                                # hum we cannot proceed to the guidance tasks because this one failed
+                                # lets see if the Job has still tasks running
                                 if self.runner.running_processes:
                                     # OK fine, there are still other tasks at the same level running
                                     continue

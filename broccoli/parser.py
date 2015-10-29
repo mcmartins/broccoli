@@ -1,5 +1,4 @@
 import json
-import sys
 import os.path
 import logging
 import jsonschema
@@ -22,8 +21,6 @@ from task import Task
 
 
 class InvalidInput(jsonschema.exceptions.ValidationError):
-
-
     """
     Raised when the input provided is not valid against the schema.
 
@@ -45,25 +42,22 @@ def parse(arg):
         config = json.load(arg)
     # validate the input, will throw an exception if fails
     __validate(config)
-    # TODO Sanitize all input values
     logging.info('Parsing input...')
-    logging.debug(config)
-    broccoli_job = Job(config['jobName'], config['workingDir'], config['timeout'])
-    for task in config['tasks']:
-        broccoli_job_task = Task(task['taskName'], task['command'])
-        if 'guidance' in task.keys():
-            broccoli_job_task = __resolve_guidance(broccoli_job_task, task['guidance'])
+    logging.debug('Input is: ' + str(config))
+    broccoli_job = Job(config.get('jobName'), config.get('workingDir'), config.get('timeout'))
+    for task in config.get('tasks'):
+        broccoli_job_task = __resolve_guidance(Task(task.get('taskName'), task.get('command')), task.get('guidance'))
         broccoli_job.add_task(broccoli_job_task)
-    logging.info('New Job created...')
+    logging.info('New Job created: ' + str(broccoli_job.name))
     return broccoli_job
 
 
 def __resolve_guidance(parent, guidance):
-    for guidanceTask in guidance:
-        task = Task(guidanceTask['taskName'], guidanceTask['command'], guidanceTask['wait'])
-        parent.add_guidance(task)
-        if 'guidance' in guidanceTask.keys():
-            return __resolve_guidance(task, guidanceTask['guidance'])
+    if guidance:
+        for guidanceTask in guidance:
+            task = Task(guidanceTask.get('taskName'), guidanceTask.get('command'), guidanceTask.get('wait'))
+            parent.add_guidance(task)
+            return __resolve_guidance(task, guidanceTask.get('guidance'))
     return parent
 
 

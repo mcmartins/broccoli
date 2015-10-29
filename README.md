@@ -17,15 +17,15 @@ The input JSON includes the following information:
 
 * A Job to execute:
  1. Name
- 2. Working directory;
- 3. Timeout;
- 4. Tasks
+ 2. Working directory
+ 3. Timeout to kill the Job
+ 4. List of Tasks
 
 * For each Task:
  1. Name
- 2. Command
- 3. Wait
- 4. Sub Tasks (Guidance)
+ 2. Command to Execute
+ 3. Wait if the Task should wait for the output of another (at the moment is not possible to use stdout from a Task to it Sub Tasks)
+ 4. List of Sub Tasks (Guidance)
 
 ## Example Input
 
@@ -84,6 +84,7 @@ The following Job is being used as TestCase:
 * Make available a Test Environment Package (it can e a docker image)
 * Tests implementation
 * Sanitize all input / Assess Security (Webgap will run in containers but this tool itself allows to execute commands like 'rm -rf /')
+* Support piping Tasks by stdout. At the moment only Tasks generating files for Guidance Tasks is implemented.
 * Multi-thread implementation
 * ...
 

@@ -1,4 +1,5 @@
 import os
+import pipes
 import shlex
 import atexit
 import subprocess
@@ -52,10 +53,12 @@ class Runner:
                 task = self.tasks.popleft()
                 logging.info('Runner - Starting processing Task: ' + str(task.name))
                 # TODO Implement the proper way - https://security.openstack.org/guidelines/dg_avoid-shell-true.html
-                command = task.command  # shlex.split(task.command)
+                # TODO Sanitize all input values - Should be done in
+                # TODO allow piping tasks to sub tasks
+                command = shlex.split(task.command)
                 logging.debug('Runner - Task Command: ' + str(command))
                 process = subprocess.Popen(command, cwd=self.job.wd, stdin=subprocess.PIPE,
-                                           stderr=subprocess.PIPE, stdout=subprocess.PIPE,
+                                           stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                            shell=True, preexec_fn=os.setsid)
                 Runner.running_processes.append(process)
                 tasks_to_monitor.append((task, process))
@@ -71,3 +74,18 @@ class Runner:
     def __timeout(self, signum, frame):
         logging.info('Processing timed out after ' + str(self.job.timeout) + ' seconds.')
         exit(5)
+
+    def __run_safe(self, command):
+        if "|" in command:
+            cmd_parts = command.split('|')
+        else:
+            cmd_parts = [command]
+        i = 0
+        p = {}
+        for cmd_part in cmd_parts:
+            cmd_part = cmd_part.strip()
+            if i == 0:
+                p[i] = subprocess.Popen(pipes.quote(cmd_part), stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            else:
+                p[i] = subprocess.Popen(pipes.quote(cmd_part), stdin=p[i - 1].stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            i += 1
