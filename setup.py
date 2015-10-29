@@ -8,4 +8,4 @@ setup(name='broccoli',
       author_email='manuelmachadomartins@gmail.com',
       license='Apache 2.0',
       packages=['broccoli'],
-      zip_safe=False)
+      zip_safe=False, requires=['jsonschema'])

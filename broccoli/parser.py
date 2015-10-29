@@ -1,7 +1,9 @@
 import json
+import sys
 import os.path
 import logging
-import pprint
+import jsonschema
+import pkg_resources
 from job import Job
 from task import Task
 
@@ -19,6 +21,23 @@ from task import Task
 """
 
 
+class InvalidInput(jsonschema.exceptions.ValidationError):
+
+
+    """
+    Raised when the input provided is not valid against the schema.
+
+    Attributes:
+        message  -- explanation of the attribute(s) that is(are) invalid
+    """
+
+    def __init__(self, message):
+        self.message = message
+
+    def __str__(self):
+        return repr(self.message)
+
+
 def parse(arg):
     """
     TODO validate the input with the schema
@@ -27,6 +46,7 @@ def parse(arg):
         config = json.loads(open(arg).read().decode("utf-8"))
     else:
         config = json.load(arg)
+    __validate(config)
     """
     TODO Sanitize all input values
     """
@@ -50,3 +70,14 @@ def __resolve_guidance(parent, guidance):
             return __resolve_guidance(task, guidanceTask['guidance'])
     return parent
 
+
+def __validate(input_data):
+    resource_package = __name__
+    resource_path = os.path.join('..', 'schema', 'broccoli_schema.json')
+    resource = pkg_resources.resource_string(resource_package, resource_path)
+    schema = json.loads(resource)
+    try:
+        jsonschema.validate(input_data, schema)
+    except jsonschema.exceptions.ValidationError, e:
+        message = 'Invalid input provided. Message is: ' + e.message
+        raise InvalidInput(message)

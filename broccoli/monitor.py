@@ -55,7 +55,7 @@ class Monitor:
                                     logging.info('Monitor - Task has Guidance. Sending Sub Tasks to Runner.')
                                     self.runner.add_tasks(task.pop_guidance())
                                 else:
-                                    logging.info('Monitor - Job Finished.')
+                                    logging.info('Monitor - Job Finished with success.')
                                     exit(0)
                         else:
                             # failed tasks goes here
@@ -66,6 +66,7 @@ class Monitor:
                                 # hmmm this task seems to be waiting for the output of another at the same level
                                 # the most probable scenario is that it won't work from here on
                                 # better to kill this now
+                                logging.info('Monitor - Job Finished with errors.')
                                 exit(1)
                             else:
                                 # hmmm we cannot proceed to the guidance tasks because this one failed
@@ -76,6 +77,7 @@ class Monitor:
                                 else:
                                     # seems we were waiting for this one to complete
                                     # better to kill this now
+                                    logging.info('Monitor - Job Finished with errors.')
                                     exit(2)
             else:
                 # are there tasks waiting for others to finish?
