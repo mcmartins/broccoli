@@ -39,17 +39,13 @@ class InvalidInput(jsonschema.exceptions.ValidationError):
 
 
 def parse(arg):
-    """
-    TODO validate the input with the schema
-    """
     if os.path.isfile(arg):
         config = json.loads(open(arg).read().decode("utf-8"))
     else:
         config = json.load(arg)
+    # validate the input, will throw an exception if fails
     __validate(config)
-    """
-    TODO Sanitize all input values
-    """
+    # TODO Sanitize all input values
     logging.info('Parsing input...')
     logging.debug(config)
     broccoli_job = Job(config['jobName'], config['workingDir'], config['timeout'])

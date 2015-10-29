@@ -84,6 +84,7 @@ The following Job is being used as TestCase:
 * Make available a Test Environment Package (it can e a docker image)
 * Tests implementation
 * Sanitize all input / Assess Security (Webgap will run in containers but this tool itself allows to execute commands like 'rm -rf /')
+* Multi-thread implementation
 * ...
 
 # LICENSE

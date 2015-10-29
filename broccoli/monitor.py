@@ -38,10 +38,11 @@ class Monitor:
                         # process finished
                         self.tasks.remove((task, process))
                         self.runner.running_processes.remove(process)
+                        (std_out, std_err) = process.communicate()
                         if return_code == 0:
                             # task finished successfully
                             logging.info('Monitor - FINISHED - Task: ' + task.name)
-                            logging.debug('Monitor - Shell output: ' + str(process.communicate()))
+                            logging.debug('Monitor - Shell output: ' + str(std_out))
                             if task.wait:
                                 # should we wait for others to finish?
                                 logging.info(
@@ -60,7 +61,7 @@ class Monitor:
                         else:
                             # failed tasks goes here
                             logging.info('Monitor - FINISHED - Task Failure: ' + task.name)
-                            logging.debug('Monitor - Shell output: ' + str(process.communicate()))
+                            logging.debug('Monitor - Shell output: ' + str(std_out))
                             self.failed_tasks.append((task, process))
                             if task.wait:
                                 # hmmm this task seems to be waiting for the output of another at the same level

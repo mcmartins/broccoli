@@ -20,7 +20,7 @@ from collections import deque
 
 
 class Runner:
-    # these is a static private variable shared among all instances of the monitor
+    # this is a static private variable shared among all instances of the monitor
     # this way we can keep track of everything that is running
     # this is useful to kill running processes when we reach a solution
     running_processes = []
@@ -51,12 +51,12 @@ class Runner:
             try:
                 task = self.tasks.popleft()
                 logging.info('Runner - Starting processing Task: ' + str(task.name))
+                # TODO Implement the proper way - https://security.openstack.org/guidelines/dg_avoid-shell-true.html
                 command = task.command  # shlex.split(task.command)
                 logging.debug('Runner - Task Command: ' + str(command))
                 process = subprocess.Popen(command, cwd=self.job.wd, stdin=subprocess.PIPE,
-                                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                           stderr=subprocess.PIPE, stdout=subprocess.PIPE,
                                            shell=True, preexec_fn=os.setsid)
-                # (stdout, stderr) = process.communicate()
                 Runner.running_processes.append(process)
                 tasks_to_monitor.append((task, process))
             except IndexError:
