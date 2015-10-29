@@ -79,7 +79,14 @@ The following Job is being used as TestCase:
 
 ![alt text](https://github.com/mcmartins/parallel-jobs/blob/master/docs/test_job.png)
 
-## MISSING TESTS IMPLEMENTATION
+# Missing
+
+* Make available a Test Enviroment
+* Tests implementation
+* Sanitize all input / Assess Security (Webgap will run in containers but this tool itself allows to execute commands like 'rm -rf /')
+* Validate Input against the JSON SCHEMA
+* ...
+* 
 
 # LICENSE
 
