@@ -14,7 +14,7 @@
           "wait": false,
           "guidance": [
             {
-              "taskName": "T1.1 - ls (1 seconds sleep)",
+              "taskName": "T1.1.1 - ls (1 seconds sleep)",
               "command": "ls -la; sleep 1",
               "wait": false
             }
