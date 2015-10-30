@@ -108,4 +108,4 @@ class Monitor:
             tasks.append(task.name)
         logging.info('The Job finished with the following path:')
         for i, task in enumerate(reversed(tasks)):
-            logging.info('\t' * (i+1) + task)
+            logging.info('\t' * i + task)
