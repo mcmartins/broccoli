@@ -82,18 +82,42 @@ The following Job is being used as TestCase:
 
 ![alt text](https://github.com/mcmartins/parallel-jobs/blob/master/docs/test_job.png)
 
-# Install & Run
+## How to setup environment
 
-## Install module
+Using a RHEL based system, CentOS 7, execute the following steps:
+
+```bash
+# assuming we're going to use the user home as working directory to download and install everything
+# download prover9 software
+wget https://www.cs.unm.edu/~mccune/prover9/download/LADR-2009-11A.tar.gz
+# unpack
+tar -xzf LADR-2009-11A.tar.gz
+# remove tar
+rm LADR-2009-11A.tar.gz
+# go to folder and compile
+cd LADR-2009-11A/
+make all
+# as root add prover9 to path (change path accordingly)
+su -
+echo 'pathmunge /home/user/LADR-2009-11A/bin' > /etc/profile.d/LADR.sh
+chmod +x /etc/profile.d/LADR.sh
+# go to home and download broccoli
+su - user
+git clone https://github.com/mcmartins/broccoli.git
+```
+
+## Install & Run
+
+### Install module
 
 ```bash
 sudo python setup.py build install
 ```
 
-## Run module
+### Run module
 
 ```bash
-python -m broccoli -v -i /path/to/input.json
+python -m broccoli -v -i /path/to/<input.json>
 # or
 python -m broccoli -v -i '<JSON>'
 ```

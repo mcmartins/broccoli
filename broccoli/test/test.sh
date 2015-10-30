@@ -11,10 +11,14 @@ make all
 su -
 echo 'pathmunge /home/mcmartins/LADR-2009-11A/bin' > /etc/profile.d/LADR.sh
 chmod +x /etc/profile.d/LADR.sh
+# go to home and download broccoli
+su - mcmartins
+git clone https://github.com/mcmartins/broccoli.git
+cd broccoli
 # install module with setup.py
 sudo python setup.py clean build install
 # execute module
-python -m broccoli -v -i /path/to/input.json
+python -m broccoli -v -i /path/to/<input.json>
 # or
 python -m broccoli -v -i '<JSON>'
 
