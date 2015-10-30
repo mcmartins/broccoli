@@ -58,7 +58,7 @@ class Runner:
                 # TODO Sanitize all input values
                 # TODO allow piping tasks to sub tasks
                 command = ' '.join(shlex.split(task.command))
-                logging.debug('Runner - Task Command: %s', str(command))
+                logging.debug('Runner - Task command: %s', str(command))
                 process = subprocess.Popen(command, cwd=self.job.wd, stdin=subprocess.PIPE,
                                            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                            shell=True, preexec_fn=os.setsid)

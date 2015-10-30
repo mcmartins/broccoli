@@ -27,7 +27,7 @@ class Monitor:
         self.tasks.extend(tasks)
         logging.info('Monitor - Starting monitor ID: %s', str(self.id))
         logging.debug(
-            'Monitor - Monitoring the following task(s): %s', str([task.name for (task, process) in tasks]))
+            'Monitor - Monitoring the following task(s): %s', ', '.join([task.name for (task, process) in tasks]))
         # start monitor loop
         self.__monitor()
 
@@ -108,7 +108,7 @@ class Monitor:
         while task.parent is not None:
             task = task.parent
             tasks.append(task.name)
-        logging.info('The Job finished with the following order:')
+        logging.info('Monitor - The Job finished with the following order:')
         for i, task in enumerate(reversed(tasks)):
             logging.info('%s: %s', ordinal(i + 1), task)
 
