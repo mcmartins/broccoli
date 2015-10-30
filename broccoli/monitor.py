@@ -25,9 +25,9 @@ class Monitor:
 
     def start(self, tasks):
         self.tasks.extend(tasks)
-        logging.info('Monitor - Starting monitor ID: ' + str(self.id))
+        logging.info('Monitor - Starting monitor ID: %s', str(self.id))
         logging.debug(
-            'Monitor - Monitoring the following task(s): ' + str([task.name for (task, process) in tasks]))
+            'Monitor - Monitoring the following task(s): %s', str([task.name for (task, process) in tasks]))
         # start monitor loop
         self.__monitor()
 
@@ -43,12 +43,11 @@ class Monitor:
                         (std_out, std_err) = process.communicate()
                         if return_code == 0:
                             # task finished successfully
-                            logging.info('Monitor - FINISHED - Task: ' + task.name)
+                            logging.info('Monitor - FINISHED - Task: %s', str(task.name))
                             Monitor.__print_output(std_err, std_out)
                             if task.wait:
                                 # should we wait for others to finish?
-                                logging.info(
-                                    'Monitor - Waiting for others Tasks to finish.')
+                                logging.info('Monitor - Waiting for others Tasks to finish.')
                                 self.waiting_tasks.append((task, process))
                                 continue
                             else:
@@ -63,7 +62,7 @@ class Monitor:
                                     exit(0)
                         else:
                             # failed tasks goes here
-                            logging.info('Monitor - FINISHED - Task Failure: ' + task.name)
+                            logging.info('Monitor - FINISHED - Task Failure: %s', str(task.name))
                             Monitor.__print_output(std_err, std_out)
                             self.failed_tasks.append((task, process))
                             if task.wait:
@@ -96,16 +95,20 @@ class Monitor:
     @staticmethod
     def __print_output(std_err, std_out):
         if std_err:
-            logging.debug('Monitor - Standard error (stderr):\n' + str(std_err))
+            logging.debug('Monitor - Standard error (stderr):\n%s', str(std_err))
         if std_out:
-            logging.debug('Monitor - Standard output (stdout):\n' + str(std_out))
+            logging.debug('Monitor - Standard output (stdout):\n%s', str(std_out))
 
     @staticmethod
     def __print_task_tree(task):
+        def ordinal(n):
+            return '%d%s' % (n, 'tsnrhtdd'[(n / 10 % 10 != 1) * (n % 10 < 4) * n % 10::4])
+
         tasks = [task.name]
         while task.parent is not None:
             task = task.parent
             tasks.append(task.name)
-        logging.info('The Job finished with the following path:')
+        logging.info('The Job finished with the following order:')
         for i, task in enumerate(reversed(tasks)):
-            logging.info('\t' * i + task)
+            logging.info('%s: %s', ordinal(i + 1), task)
+

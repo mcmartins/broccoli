@@ -61,12 +61,12 @@ def parse(arg):
     # validate the input, will throw an exception if fails
     __validate(config)
     logging.info('Parsing input...')
-    logging.debug('Input is: ' + str(config))
+    logging.debug('Input is: %s', str(config))
     broccoli_job = Job(config.get('jobName'), config.get('workingDir'), config.get('timeout'))
     for task in config.get('tasks'):
         broccoli_job.add_task(
             __build_task(Task(task.get('taskName'), task.get('command'), task.get('wait')), task.get('guidance')))
-    logging.info('New Job created: ' + str(broccoli_job.name))
+    logging.info('New Job created: %s', str(broccoli_job.name))
     return broccoli_job
 
 

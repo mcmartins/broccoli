@@ -1,23 +1,30 @@
 {
-  "jobName": "Boolean Algebra 2-Basis",
+  "jobName": "List working directory files. Uses sleep to simulate time consuming tasks.",
   "workingDir": "/tmp/",
-  "timeout": 60,
+  "timeout": 10,
   "tasks": [
     {
-      "taskName": "T1 - ls (2 seconds sleep)",
+      "taskName": "T1 - ls (1 seconds sleep)",
+      "command": "ls -la; sleep 1",
       "wait": false,
-      "command": "ls -la; sleep 2",
       "guidance": [
         {
-          "taskName": "T1.1 - ls (2 seconds sleep)",
-          "command": "ls -la; sleep 2",
-          "wait": false
+          "taskName": "T1.1 - ls (1 seconds sleep)",
+          "command": "ls -la; sleep 1",
+          "wait": false,
+          "guidance": [
+            {
+              "taskName": "T1.1 - ls (1 seconds sleep)",
+              "command": "ls -la; sleep 1",
+              "wait": false
+            }
+          ]
         }
       ]
     },
     {
-      "taskName": "T2 - ls (15 seconds sleep)",
-      "command": "ls -la; sleep 15",
+      "taskName": "T2 - ls (5 seconds sleep)",
+      "command": "ls -la; sleep 5",
       "wait": false
     }
   ]

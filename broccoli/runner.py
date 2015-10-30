@@ -29,7 +29,7 @@ class Runner:
     @staticmethod
     def terminate():
         for process in Runner.running_processes:
-            logging.info('Killing running process with pid ' + str(process.pid))
+            logging.info('Killing running process with pid %s.', str(process.pid))
             os.killpg(process.pid, signal.SIGTERM)
         logging.info('Bye Bye.')
 
@@ -43,7 +43,9 @@ class Runner:
         atexit.register(Runner.terminate)
         self.job = job
         self.tasks = deque([])
-        logging.info('Runner - Running Tasks for Job: ' + str(job.name))
+        logging.info('Runner - Running Tasks for Job: %s', str(job.name))
+        logging.debug('Runner - Working Directory is: %s', str(job.wd))
+        logging.debug('Runner - Will Timeout after: %s seconds', str(job.timeout))
         self.add_tasks(job.pop_tasks())
 
     def __run(self):
@@ -51,12 +53,12 @@ class Runner:
         while True:
             try:
                 task = self.tasks.popleft()
-                logging.info('Runner - Starting processing Task: ' + str(task.name))
+                logging.info('Runner - Starting processing Task: %s', str(task.name))
                 # TODO Implement the proper way - https://security.openstack.org/guidelines/dg_avoid-shell-true.html
                 # TODO Sanitize all input values
                 # TODO allow piping tasks to sub tasks
                 command = ' '.join(shlex.split(task.command))
-                logging.debug('Runner - Task Command: ' + str(command))
+                logging.debug('Runner - Task Command: %s', str(command))
                 process = subprocess.Popen(command, cwd=self.job.wd, stdin=subprocess.PIPE,
                                            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                            shell=True, preexec_fn=os.setsid)
@@ -72,7 +74,7 @@ class Runner:
         self.__run()
 
     def __timeout(self, signum, frame):
-        logging.info('Processing timed out after ' + str(self.job.timeout) + ' seconds.')
+        logging.info('Processing timed out after %s seconds.', str(self.job.timeout))
         exit(5)
 
     def __run_safe(self, command):
