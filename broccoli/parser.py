@@ -75,7 +75,7 @@ def __build_task(parent, guidance):
         for guidanceTask in guidance:
             task = Task(guidanceTask.get('taskName'), guidanceTask.get('command'), guidanceTask.get('wait'))
             parent.add_guidance(task)
-            return __build_task(parent, guidanceTask.get('guidance'))
+            __build_task(task, guidanceTask.get('guidance'))
     return parent
 
 
@@ -86,3 +86,7 @@ def __validate(input_data):
         jsonschema.validate(input_data, json.loads(schema))
     except jsonschema.exceptions.ValidationError, e:
         raise MalformedJSONInput(e.message)
+
+if __name__ == '__main__':
+    import sys
+    job = parse(sys.argv[1])
