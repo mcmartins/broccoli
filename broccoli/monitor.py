@@ -58,6 +58,7 @@ class Monitor:
                                     logging.info('Monitor - Task has Guidance. Sending Sub Tasks to Runner.')
                                     self.runner.add_tasks(task.pop_guidance())
                                 else:
+                                    self.__print_task_tree(task)
                                     logging.info('Monitor - Job Finished with success.')
                                     exit(0)
                         else:
@@ -98,3 +99,13 @@ class Monitor:
             logging.debug('Monitor - Standard error (stderr):\n' + str(std_err))
         if std_out:
             logging.debug('Monitor - Standard output (stdout):\n' + str(std_out))
+
+    @staticmethod
+    def __print_task_tree(task):
+        tasks = [task.name]
+        while task.parent is not None:
+            task = task.parent
+            tasks.append(task.name)
+        logging.info('The Job finished with the following path:')
+        for i, task in enumerate(reversed(tasks)):
+            logging.info('\t' * (i+1) + task)
