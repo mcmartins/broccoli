@@ -18,7 +18,7 @@ import broccoli.parser
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Main entry point for Broccoli Module. Usage: python broccoli -i <input.json>'
+        description='Main entry point for Broccoli Module. Usage: python -m broccoli -v -i <input.json>'
     )
     parser.add_argument('-v', '--verbose', help='increase output verbosity', action='store_true',
                         required=False)

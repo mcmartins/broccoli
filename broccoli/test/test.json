@@ -1,0 +1,24 @@
+{
+  "jobName": "Boolean Algebra 2-Basis",
+  "workingDir": "/tmp/",
+  "timeout": 60,
+  "tasks": [
+    {
+      "taskName": "T1 - ls (2 seconds sleep)",
+      "wait": false,
+      "command": "ls -la; sleep 2",
+      "guidance": [
+        {
+          "taskName": "T1.1 - ls (2 seconds sleep)",
+          "command": "ls -la; sleep 2",
+          "wait": false
+        }
+      ]
+    },
+    {
+      "taskName": "T2 - ls (15 seconds sleep)",
+      "command": "ls -la; sleep 15",
+      "wait": false
+    }
+  ]
+}
