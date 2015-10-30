@@ -64,6 +64,7 @@ class Runner:
                                            shell=True, preexec_fn=os.setsid)
                 Runner.running_processes.append(process)
                 tasks_to_monitor.append((task, process))
+                logging.debug('Runner - Task process pid is: %s', str(process.pid))
             except IndexError:
                 break
         monitor = Monitor(self)
