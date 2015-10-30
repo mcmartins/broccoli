@@ -1,10 +1,10 @@
 import logging
 
 """
-    broccoli.logging
+    broccoli.__init___
     ~~~~~~~~~~~~~
 
-    Default logging configuration.
+    Initialize module with default logging config.
 
     :copyright: 2015 Manuel Martins, see AUTHORS for more details
     :license: Apache 2.0, see LICENSE for more details

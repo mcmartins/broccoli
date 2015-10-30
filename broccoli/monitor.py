@@ -44,7 +44,7 @@ class Monitor:
                         if return_code == 0:
                             # task finished successfully
                             logging.info('Monitor - FINISHED - Task: ' + task.name)
-                            logging.debug('Monitor - Shell output: ' + str(std_err))
+                            Monitor.__print_output(std_err, std_out)
                             if task.wait:
                                 # should we wait for others to finish?
                                 logging.info(
@@ -63,7 +63,7 @@ class Monitor:
                         else:
                             # failed tasks goes here
                             logging.info('Monitor - FINISHED - Task Failure: ' + task.name)
-                            logging.debug('Monitor - Shell output: ' + str(std_err))
+                            Monitor.__print_output(std_err, std_out)
                             self.failed_tasks.append((task, process))
                             if task.wait:
                                 # hum this task failed and it seems to be waiting for
@@ -91,3 +91,10 @@ class Monitor:
                 # this branch is over no need to monitor anymore
                 # a new monitor is created for each branch of tasks
                 break
+
+    @staticmethod
+    def __print_output(std_err, std_out):
+        if std_err:
+            logging.debug('Monitor - Standard error (stderr):\n' + str(std_err))
+        if std_out:
+            logging.debug('Monitor - Standard output (stdout):\n' + str(std_out))

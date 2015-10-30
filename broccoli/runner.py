@@ -53,9 +53,9 @@ class Runner:
                 task = self.tasks.popleft()
                 logging.info('Runner - Starting processing Task: ' + str(task.name))
                 # TODO Implement the proper way - https://security.openstack.org/guidelines/dg_avoid-shell-true.html
-                # TODO Sanitize all input values - Should be done in
+                # TODO Sanitize all input values
                 # TODO allow piping tasks to sub tasks
-                command = shlex.split(task.command)
+                command = ' '.join(shlex.split(task.command))
                 logging.debug('Runner - Task Command: ' + str(command))
                 process = subprocess.Popen(command, cwd=self.job.wd, stdin=subprocess.PIPE,
                                            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
@@ -76,6 +76,7 @@ class Runner:
         exit(5)
 
     def __run_safe(self, command):
+        # TODO redo this code and replace __run function
         if "|" in command:
             cmd_parts = command.split('|')
         else:

@@ -7,5 +7,6 @@ setup(name='broccoli',
       author='Manuel Martins',
       author_email='manuelmachadomartins@gmail.com',
       license='Apache 2.0',
-      packages=['broccoli'],
+      packages=['broccoli', 'broccoli.schema', 'broccoli.test'],
+      package_data={'broccoli': ['schema/*.json']},
       zip_safe=False, requires=['jsonschema'])

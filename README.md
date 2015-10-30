@@ -38,24 +38,25 @@ The input will be something like:
   "timeout": 60,
   "tasks": [
     {
-      "taskName": "Get guiding interpretation",
+      "taskName": "T1 - Get guiding interpretation",
       "wait": false,
       "command": "mace4 -n6 -m -1 -f BA2-interp.in | get_interps | isofilter ignore_constants wrap > BA2-interp.out",
       "guidance": [
         {
-          "taskName": "Job with guidance (20 seconds)",
-          "wait": false,
-          "command": "prover9 -f BA2.in BA2-interp.out > BA2.out"
+          "taskName": "T1.1 - Task with guidance (20 seconds)",
+          "command": "prover9 -f BA2.in BA2-interp.out > BA2.out",
+          "wait": false
         }
       ]
     },
     {
-      "taskName": "Job without guidance (46 seconds)",
-      "wait": false,
-      "command": "prover9 -f BA2.in > BA2-base.out"
+      "taskName": "T2 - Task without guidance (46 seconds)",
+      "command": "prover9 -f BA2.in > BA2-base.out",
+      "wait": false
     }
   ]
 }
+
 ```
 
 ## Integration with WebGAP
@@ -78,6 +79,22 @@ Job Diagram
 The following Job is being used as TestCase:
 
 ![alt text](https://github.com/mcmartins/parallel-jobs/blob/master/docs/test_job.png)
+
+# Install & Run
+
+## Install module
+
+```bash
+sudo python setup.py build install
+```
+
+## Run module
+
+```bash
+python -m broccoli -v -i /path/to/input.json
+# or
+python -m broccoli -v -i '<JSON>'
+```
 
 # Missing
 
