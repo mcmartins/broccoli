@@ -4,6 +4,11 @@ python:
 
 env:
     - DEPS=true
+    
+script:
+  - cp broccoli/test/*.in /tmp/
+  - python -m broccoli -h
+  - python -m broccoli -v -i broccoli/test/input.json
 
 install:
     - python setup.py -q clean build install
