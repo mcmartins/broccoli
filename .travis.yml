@@ -4,9 +4,9 @@ python:
 
 env:
     - DEPS=true
-    
+
 script:
   - python -m broccoli -v -i broccoli/test/test.json
 
 install:
-    - python setup.py -q clean build install
+  - python setup.py -q clean build install
