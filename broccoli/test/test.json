@@ -1,30 +1,23 @@
 {
-  "jobName": "List working directory files. Uses sleep to simulate time consuming tasks.",
+  "jobName": "Boolean Algebra 2-Basis",
   "workingDir": "/tmp/",
-  "timeout": 10,
+  "timeout": 60,
   "tasks": [
     {
-      "taskName": "T1 - ls (1 seconds sleep)",
-      "command": "ls -la; sleep 1",
+      "taskName": "T1 - Get guiding interpretation",
       "wait": false,
+      "command": "/tmp/LADR-2009-11A/bin/mace4 -n6 -m -1 -f BA2-interp.in | get_interps | isofilter ignore_constants wrap > BA2-interp.out",
       "guidance": [
         {
-          "taskName": "T1.1 - ls (1 seconds sleep)",
-          "command": "ls -la; sleep 1",
-          "wait": false,
-          "guidance": [
-            {
-              "taskName": "T1.1.1 - ls (1 seconds sleep)",
-              "command": "ls -la; sleep 1",
-              "wait": false
-            }
-          ]
+          "taskName": "T1.1 - Task with guidance (20 seconds)",
+          "command": "/tmp/LADR-2009-11A/bin/prover9 -f BA2.in BA2-interp.out > BA2.out",
+          "wait": false
         }
       ]
     },
     {
-      "taskName": "T2 - ls (5 seconds sleep)",
-      "command": "ls -la; sleep 5",
+      "taskName": "T2 - Task without guidance (46 seconds)",
+      "command": "/tmp/LADR-2009-11A/bin/prover9 -f BA2.in > BA2-base.out",
       "wait": false
     }
   ]
