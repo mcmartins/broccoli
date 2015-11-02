@@ -5,8 +5,19 @@ python:
 env:
     - DEPS=true
 
-script:
-  - python -m broccoli -v -i broccoli/test/test.json
+before_install:
+  - cp broccoli/test/*.in /tmp/
+  - cd /tmp/
+  - wget https://www.cs.unm.edu/~mccune/prover9/download/LADR-2009-11A.tar.gz
+  - tar -xzf LADR-2009-11A.tar.gz
+  - rm LADR-2009-11A.tar.gz
+  - cd LADR-2009-11A/
+  - make all
+  - cd -
 
 install:
-  - python setup.py -q clean build install
+  - python setup.py -q build install
+
+script:
+  - python -m broccoli -v -i broccoli/test/test.json
+ 
