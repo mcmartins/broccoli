@@ -20,7 +20,7 @@ before_install:
   - cd -
 
 install:
-  - python setup.py -q build install
+  - python setup.py -q clean build install
 
 script:
   - python -m broccoli -v -i broccoli/test/test.json
