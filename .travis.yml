@@ -6,14 +6,16 @@ env:
     - DEPS=true
 
 before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install linux-headers-$(uname -r) build-essential -qq
-  - cp broccoli/test/*.in /tmp/
+  - sudo apt-get update
+  - sudo apt-get install build-essential
   - cd /tmp/
   - wget https://www.cs.unm.edu/~mccune/prover9/download/LADR-2009-11A.tar.gz
   - tar -xzf LADR-2009-11A.tar.gz
   - rm LADR-2009-11A.tar.gz
-  - cd LADR-2009-11A/
+  - cd -
+  - cp brocolli/test/Makefile /tmp/LADR-2009-11A/provers.src
+  - cp broccoli/test/*.in /tmp/
+  - cd /tmp/LADR-2009-11A/
   - make all
   - cd -
 
