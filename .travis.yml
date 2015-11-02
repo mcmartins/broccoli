@@ -13,7 +13,7 @@ before_install:
   - tar -xzf LADR-2009-11A.tar.gz
   - rm LADR-2009-11A.tar.gz
   - cd -
-  - cp brocolli/test/Makefile /tmp/LADR-2009-11A/provers.src
+  - cp broccoli/test/Makefile /tmp/LADR-2009-11A/provers.src
   - cp broccoli/test/*.in /tmp/
   - cd /tmp/LADR-2009-11A/
   - make all
