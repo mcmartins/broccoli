@@ -1,6 +1,6 @@
 {
   "jobName": "Boolean Algebra 2-Basis",
-  "JobDescription": "Consider an Idempotent Group. Is it commutative? Find a proof or counter proof.",
+  "jobDescription": "Consider an Idempotent Group. Is it commutative? Find a proof or counter proof.",
   "workingDir": "/tmp/basic/",
   "timeout": 10,
   "tasks": [

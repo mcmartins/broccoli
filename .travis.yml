@@ -14,7 +14,8 @@ before_install:
   - rm LADR-2009-11A.tar.gz
   - cd -
   - cp broccoli/test/Makefile /tmp/LADR-2009-11A/provers.src
-  - cp -r broccoli/test /tmp/
+  - cp -r broccoli/test/basic /tmp/
+  - cp -r broccoli/test/guidance /tmp/
   - cd /tmp/LADR-2009-11A/
   - make all
   - cd -
@@ -30,5 +31,4 @@ after_script:
   - ls -la /tmp
   - ls -la /tmp/basic
   - ls -la /tmp/guidance
-  - ls -la /tmp/autonomous
 
