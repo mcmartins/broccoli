@@ -1,0 +1,19 @@
+{
+  "jobName": "",
+  "jobDescription": "",
+  "workingDir": "/tmp/autonomous/",
+  "timeout": 60,
+  "mode": "autonomous",
+  "tasks": [
+    {
+      "taskName": "T1 - Generate consequences",
+      "command": "../LADR-2009-11A/bin/prover9 -f Axioms.in > Consequences.out",
+      "guidance": [
+        {
+          "taskName": "T1.1 - Task with guidance (20 seconds)",
+          "command": "../LADR-2009-11A/bin/prover9 -f BA2.in BA2-interp.out > BA2.out"
+        }
+      ]
+    }
+  ]
+}

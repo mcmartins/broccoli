@@ -19,9 +19,10 @@ The input JSON includes the following information:
 
 * A Job to execute:
  1. Name to identify the Job
- 2. Working directory where the Job will run, and all the output will be stored (if not specified otherwise)
- 3. Timeout in seconds to kill the Job if exceeds
- 4. List of Tasks that constitute the Job
+ 2. Description to best describe the Job
+ 3. Working directory where the Job will run, and all the output will be stored (if not specified otherwise)
+ 4. Timeout in seconds to kill the Job if exceeds
+ 5. List of Tasks that constitute the Job
 
 * For each Task:
  1. Name o identify the Task
@@ -36,6 +37,7 @@ The input can be something like:
 ```json
 {
   "jobName": "Boolean Algebra 2-Basis",
+  "jobDescription": "From: https://www.cs.unm.edu/~mccune/prover9/examples/2009-11A/semantics/index.html",
   "workingDir": "/tmp/",
   "timeout": 60,
   "tasks": [
@@ -76,11 +78,19 @@ Job Diagram
 
 ![alt text](https://github.com/mcmartins/parallel-jobs/blob/master/docs/job.png)
 
-# Test
+# Tests
 
-The following Job is being used as TestCase:
+There are 4 TestCases:
+
+Run on Error;
+
+Run Basic example from the course examples;
+
+Run Basic example with guidance:
 
 ![alt text](https://github.com/mcmartins/parallel-jobs/blob/master/docs/test_job.png)
+
+Run Autonomous prover - TBI
 
 ## How to setup environment
 

@@ -14,7 +14,7 @@ before_install:
   - rm LADR-2009-11A.tar.gz
   - cd -
   - cp broccoli/test/Makefile /tmp/LADR-2009-11A/provers.src
-  - cp broccoli/test/*.in /tmp/
+  - cp -r broccoli/test /tmp/
   - cd /tmp/LADR-2009-11A/
   - make all
   - cd -
@@ -23,8 +23,13 @@ install:
   - python setup.py -q clean build install
 
 script:
-  - python -m broccoli -v -i broccoli/test/test.json
+  - python -m broccoli -v -i broccoli/test/error/test.json
+  - python -m broccoli -v -i broccoli/test/basic/test.json
+  - python -m broccoli -v -i broccoli/test/guidance/test.json
 
 after_script:
   - ls -la /tmp
- 
+  - ls -la /tmp/basic
+  - ls -la /tmp/guidance
+  - ls -la /tmp/autonomous
+

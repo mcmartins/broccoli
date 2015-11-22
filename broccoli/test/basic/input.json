@@ -1,0 +1,19 @@
+{
+  "jobName": "Boolean Algebra 2-Basis",
+  "JobDescription": "Consider an Idempotent Group. Is it commutative? Find a proof or counter proof.",
+  "workingDir": "/tmp/basic/",
+  "timeout": 10,
+  "mode": "strict",
+  "tasks": [
+    {
+      "taskName": "T1 - Run Prover9 to try to find a proof",
+      "command": "../LADR-2009-11A/bin/prover9 -f Basic.in > Basic_prover.out",
+      "wait": false
+    },
+    {
+      "taskName": "T2 - Run Mace4 to try to find a CounterProof",
+      "command": "../LADR-2009-11A/bin/mace4 -f Basic.in > Basic_mace.out",
+      "wait": false
+    }
+  ]
+}

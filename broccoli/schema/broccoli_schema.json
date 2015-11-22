@@ -51,6 +51,12 @@
       "title": "Job Name",
       "description": "The Job Name is used to identify the Job running"
     },
+    "jobDescription": {
+      "type": "string",
+      "minLength": 1,
+      "title": "Job Description",
+      "description": "The Job Description is used to provide more details"
+    },
     "workingDir": {
       "type": "string",
       "minLength": 1,
