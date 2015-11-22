@@ -3,7 +3,6 @@
   "jobDescription": "From: https://www.cs.unm.edu/~mccune/prover9/examples/2009-11A/semantics/index.html",
   "workingDir": "/tmp/guidance/",
   "timeout": 60,
-  "mode": "strict",
   "tasks": [
     {
       "taskName": "T1 - Get guiding interpretation",

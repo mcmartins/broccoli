@@ -3,7 +3,6 @@
   "jobDescription": "",
   "workingDir": "/tmp/autonomous/",
   "timeout": 60,
-  "mode": "autonomous",
   "tasks": [
     {
       "taskName": "T1 - Generate consequences",

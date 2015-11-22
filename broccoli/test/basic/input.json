@@ -3,7 +3,6 @@
   "JobDescription": "Consider an Idempotent Group. Is it commutative? Find a proof or counter proof.",
   "workingDir": "/tmp/basic/",
   "timeout": 10,
-  "mode": "strict",
   "tasks": [
     {
       "taskName": "T1 - Run Prover9 to try to find a proof",
