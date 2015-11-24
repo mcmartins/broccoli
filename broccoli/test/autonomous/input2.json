@@ -7,17 +7,15 @@
   "tasks": [{
     "taskName": "T1",
     "taskDescription": "Run Prover9 to generate consequences and find new proofs",
-    "command": "prover9 -f Axioms.in > Axioms.out",
+    "command": "prover9 -f Basic.in > Basic_prover.out",
     "guidance": [{
       "taskName": "T1.1",
       "taskDescription": "Run Prover and Mace for each line produced on previous task and look for new theorems",
       "generate": {
-        "forEach": "line",
-        "in": "Axioms.out",
+        "forEach": "file",
+        "in": "/tmp/basic/",
         "matching": "^(regex)$",
-        "replaceIn": "From_Axioms.in",
-        "placeholder": "$placeholder",
-        "executeCommands": ["prover9 -f From_Axioms_$line.in > From_Axioms_$line_prover.out", "mace4 -f From_Axioms_$line.in > From_Axioms_$line_mace.out"]
+        "executeCommands": ["prover9 -f $file.in > $file_prover.out", "mace4 -f $file.in > $file_mace.out"]
       }
     }]
   }]

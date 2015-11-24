@@ -15,7 +15,7 @@ import os
 def initialize(job, verbose):
     # ensure the working directory exists in order to write the log file
     if not os.path.exists(job.wd):
-        logging.info('The working directory %s specified, does not exist. Creating working directory...', job.wd)
+        logging.info('The working directory %s specified, does not exist. Creating working directory...', str(job.wd))
         os.makedirs(job.wd)
     handler = logging.FileHandler(job.wd + '/Broccoli-Job-' + str(job.id) + '.log')
     formatter = logging.Formatter('%(asctime)s - [%(levelname)s] - %(message)s')

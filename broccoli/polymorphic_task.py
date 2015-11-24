@@ -1,4 +1,4 @@
-import uuid
+from broccoli.task import Task
 
 """
     broccoli.Task
@@ -16,7 +16,7 @@ import uuid
 """
 
 
-class Task:
+class PolymorphicTask(Task):
     """
        Task constructor
 
@@ -25,29 +25,4 @@ class Task:
     """
 
     def __init__(self, name='Anonymous', command=''):
-        self.id = uuid.uuid4()
-        self.parent = None
-        self.name = name
-        self.command = command
-        self.guidance = []
-
-    """
-        Add Sub Task (Guidance)
-
-        :param task
-    """
-
-    def add_guidance(self, task):
-        task.parent = self
-        self.guidance.append(task)
-
-    """
-        Pop Guidance Tasks
-
-        :return tasks
-    """
-
-    def pop_guidance(self):
-        temp = self.guidance
-        self.guidance = []
-        return temp
+        Task.__init__(self, name, command)

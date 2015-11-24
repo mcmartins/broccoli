@@ -86,7 +86,3 @@ def __validate(input_data):
         jsonschema.validate(input_data, json.loads(schema))
     except jsonschema.exceptions.ValidationError, e:
         raise MalformedJSONInput(e.message)
-
-if __name__ == '__main__':
-    import sys
-    job = parse(sys.argv[1])
