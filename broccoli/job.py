@@ -1,4 +1,6 @@
 import uuid
+import logging
+import broccoli.task
 
 """
     broccoli.Job
@@ -23,21 +25,25 @@ class Job:
        :param timeout
     """
 
-    def __init__(self, name='Anonymous', wd='/tmp/', timeout=3600):
+    def __init__(self, name='Anonymous', description='', wd='/tmp/', timeout=3600):
         self.id = uuid.uuid4()
         self.name = name
+        self.description = description
         self.wd = wd
         self.timeout = timeout
         self.tasks = []
 
-    """
-        Add Tasks to the Job
+    def __init__(self, jobConfig):
+        self.id = uuid.uuid4()
+        self.name = jobConfig.get('jobName')
+        self.description = jobConfig.get('jobDescription')
+        self.wd = jobConfig.get('workingDir')
+        self.timeout = jobConfig.get('timeout')
+        self.tasks = []
+        for taskConfig in jobConfig.get('tasks'):
+            self.tasks.append(broccoli.task.Task(taskConfig))
+        logging.info('New Job created: %s', str(self.name))
 
-        :param task
-    """
-
-    def add_task(self, task):
-        self.tasks.append(task)
 
     """
         Pop Tasks

@@ -1,0 +1,39 @@
+import multiprocessing
+import commands
+
+
+class Worker(multiprocessing.Process):
+    def __init__(self, work_queue, result_queue):
+        multiprocessing.Process.__init__(self)
+        self.work_queue = work_queue
+        self.result_queue = result_queue
+        self.kill_received = False
+
+    def run(self):
+        while (not self.kill_received) and (not self.work_queue.empty()):
+            try:
+                task = self.work_queue.get_nowait()
+            except:
+                break
+
+            for command in task.get_commands():
+                ret = self.get_output(command)
+                self.result_queue.put(ret)
+
+    def get_output(self, command):
+        try:
+            return commands.getoutput(command)
+        except:
+            return "Error executing command %s" % (command)
+
+    def execute(self, job, num_processes=4):
+        work_queue = multiprocessing.Queue()
+        result_queue = multiprocessing.Queue()
+        for task in job.pop_tasks():
+            work_queue.put(task)
+
+        workers = []
+        for i in range(num_processes):
+            workers.append(Worker(work_queue, result_queue))
+            workers[i].start()
+

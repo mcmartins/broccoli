@@ -12,12 +12,12 @@ import os
 """
 
 
-def initialize(job, verbose):
+def initialize(config, verbose):
     # ensure the working directory exists in order to write the log file
-    if not os.path.exists(job.wd):
-        logging.info('The working directory %s specified, does not exist. Creating working directory...', str(job.wd))
-        os.makedirs(job.wd)
-    handler = logging.FileHandler(job.wd + '/Broccoli-Job-' + str(job.id) + '.log')
+    if not os.path.exists(config.get('workingDir')):
+        logging.info('The working directory %s specified, does not exist. Creating working directory...', str(config.get('workingDir')))
+        os.makedirs(config.get('workingDir'))
+    handler = logging.FileHandler(config.get('workingDir') + '/Broccoli-Job-' + config.get('jobName') + '.log')
     formatter = logging.Formatter('%(asctime)s - [%(levelname)s] - %(message)s')
     handler.setFormatter(formatter)
     logging.getLogger().addHandler(handler)

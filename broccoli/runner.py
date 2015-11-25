@@ -78,6 +78,7 @@ class Runner:
         logging.info('Processing timed out after %s seconds.', str(self.job.timeout))
         exit(5)
 
+# https://sites.google.com/site/sachinkagarwal/home/code-snippets/parallelizing-multiprocessing-commands-using-python
     def __run_safe(self, command):
         # TODO redo this code and replace __run function
         if "|" in command:

@@ -62,7 +62,7 @@ def parse(arg):
     __validate(config)
     logging.info('Parsing input...')
     logging.debug('Input is: %s', str(config))
-    broccoli_job = Job(config.get('jobName'), config.get('workingDir'), config.get('timeout'))
+    broccoli_job = Job(config.get('jobName'), config.get('jobDescription'), config.get('workingDir'), config.get('timeout'))
     for task in config.get('tasks'):
         broccoli_job.add_task(
             __build_task(Task(task.get('taskName'), task.get('command'), task.get('wait')), task.get('guidance')))

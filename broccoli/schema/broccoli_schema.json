@@ -2,13 +2,13 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "id": "https://portal.webgap.eu/alpaca/schemas/broccoli.json",
   "title": "Broccoli schema definition",
-  "description": "This document describes the possible ways to interact with the broccoli Job Executor system",
+  "description": "This document describes how to interact with broccoli Job Executor system",
   "additionalProperties": false,
   "type": "object",
   "definitions": {
     "task": {
-      "title": "Describes a Strict Task",
-      "description": "A Strict Task is a simple process holding a name, a command and following Sub Tasks. Sub Tasks can be Strict or Polymorphic",
+      "title": "Describes a Task",
+      "description": "A Task is a simple process holding a name, a description, steps to run a command and following Sub Tasks (Guidance Tasks)",
       "additionalProperties": false,
       "type": "object",
       "properties": {
@@ -24,107 +24,76 @@
           "title": "Task Description",
           "description": "Description of the Task"
         },
-        "command": {
-          "type": "string",
-          "minLength": 1,
-          "title": "Command",
-          "description": "The full command to execute including args"
-        },
         "wait": {
           "type": "boolean",
           "title": "Wait for other Tasks, at same level, to complete",
-          "description": "Set it to true if this Task should wait for others to complete before moving on"
+          "description": "Set it to true if this Task should wait for others to complete before moving on to guidance"
+        },
+        "run": {
+          "title": "Run",
+          "description": "What to do to run this task. It can be a simple command, read a file line by line and start process or read a set of files and start processes",
+          "additionalProperties": false,
+          "type": "object",
+          "properties": {
+            "forEach": {
+              "type": "string",
+              "title": "For Each",
+              "description": "",
+              "enum": [
+                "line",
+                "file"
+              ]
+            },
+            "in": {
+              "type": "string",
+              "minLength": 1,
+              "title": "In",
+              "description": ""
+            },
+            "matching": {
+              "type": "string",
+              "minLength": 1,
+              "title": "Matching Regex",
+              "description": ""
+            },
+            "replace": {
+              "type": "string",
+              "minLength": 1,
+              "title": "File to replace",
+              "description": ""
+            },
+            "placeholder": {
+              "type": "string",
+              "minLength": 1,
+              "title": "Placeholder to replace",
+              "description": ""
+            },
+            "commands": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": false,
+              "additionalItems": false,
+              "title": "Commands",
+              "description": "",
+              "items": {
+                "description": "",
+                "title": "Command",
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
         },
         "guidance": {
           "type": "array",
           "title": "Guidance Tasks",
           "description": "Guidance defines the Sub Tasks to execute after the current Task finishes",
+          "additionalItems": false,
           "items": {
-            "description": "A Task is a simple process holding a name, a command and following Sub Tasks",
+            "description": "A Task is a simple process holding a name, a description, steps to run a command and following Sub Tasks (Guidance Tasks)",
             "title": "Guidance Task",
-            "anyOf": [
-              {
-                "$ref": "#/definitions/strictTask"
-              },
-              {
-                "$ref": "#/definitions/polymorphicTask"
-              }
-            ],
+            "$ref": "#/definitions/task",
             "additionalProperties": false
-          },
-          "additionalItems": false
-        }
-      }
-    },
-    "polymorphicTask": {
-      "title": "Describes a Polymorphic Task",
-      "description": "A Polymorphic Task is a complex process holding a name, a command, transformation details and following Sub Tasks. Sub Tasks can be Strict or Polymorphic",
-      "additionalProperties": false,
-      "type": "object",
-      "properties": {
-        "taskName": {
-          "type": "string",
-          "minLength": 1,
-          "title": "Task Name",
-          "description": "Name of the Task"
-        },
-        "taskDescription": {
-          "type": "string",
-          "minLength": 1,
-          "title": "Task Description",
-          "description": "Description of the Task"
-        },
-        "replace": {
-          "forEach": {
-            "type": "string",
-            "title": "In File full path or Directory",
-            "description": "Name of the Task",
-            "enum": [
-              "line",
-              "file"
-            ]
-          },
-          "in": {
-            "type": "string",
-            "minLength": 1,
-            "title": "In File full path or Directory",
-            "description": "Name of the Task"
-          },
-          "matching": {
-            "type": "string",
-            "minLength": 1,
-            "title": "Matching Regex",
-            "description": "Name of the Task"
-          },
-          "replace": {
-            "type": "string",
-            "minLength": 1,
-            "title": "File to replace",
-            "description": "Name of the Task"
-          },
-          "placeholder": {
-            "type": "string",
-            "minLength": 1,
-            "title": "File to replace",
-            "description": "Name of the Task"
-          },
-          "executeCommands": {
-            "type": "array",
-            "title": "Guidance Tasks",
-            "description": "Guidance defines the Sub Tasks to execute after the current Task finishes",
-            "items": {
-              "description": "A Task is a simple process holding a name, a command and following Sub Tasks",
-              "title": "Guidance Task",
-              "type": "object",
-              "properties": {
-                "command": {
-                  "type": "string",
-                  "minLength": 1,
-                  "title": "Command",
-                  "description": "The full command to execute including args"
-                }
-              }
-            }
           }
         }
       }
@@ -159,11 +128,6 @@
       "title": "Timeout",
       "description": "The Timeout in seconds for the executor to trigger the kill of all processes running"
     },
-    "wait": {
-      "type": "boolean",
-      "title": "Kill Running Processes on Task Finish",
-      "description": "Set to false if you don't want to kill running processes when a Task completes"
-    },
     "tasks": {
       "type": "array",
       "minItems": 1,
@@ -173,16 +137,9 @@
       "description": "The Tasks to execute within this Job",
       "name": "tasks",
       "items": {
-        "description": "A Task is a simple process holding a name, a command and following Sub Tasks (Guidance Tasks)",
+        "description": "A Task is a simple process holding a name, a description, steps to run a command and following Sub Tasks (Guidance Tasks)",
         "title": "Task",
-        "anyOf": [
-          {
-            "$ref": "#/definitions/strictTask"
-          },
-          {
-            "$ref": "#/definitions/polymorphicTask"
-          }
-        ],
+        "$ref": "#/definitions/task",
         "additionalProperties": false
       }
     }
