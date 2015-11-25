@@ -17,23 +17,23 @@ class Worker(multiprocessing.Process):
                 break
 
             for command in task.get_commands():
-                ret = self.get_output(command)
+                ret = self.__start_sub_process(command)
                 self.result_queue.put(ret)
 
-    def get_output(self, command):
+    def __start_sub_process(self, command):
         try:
             return commands.getoutput(command)
         except:
             return "Error executing command %s" % (command)
 
-    def execute(self, job, num_processes=4):
-        work_queue = multiprocessing.Queue()
-        result_queue = multiprocessing.Queue()
-        for task in job.pop_tasks():
-            work_queue.put(task)
+def run(job, num_processes=4):
+    work_queue = multiprocessing.Queue()
+    result_queue = multiprocessing.Queue()
+    for task in job.pop_tasks():
+        work_queue.put(task)
 
-        workers = []
-        for i in range(num_processes):
-            workers.append(Worker(work_queue, result_queue))
-            workers[i].start()
+    workers = []
+    for i in range(num_processes):
+        workers.append(Worker(work_queue, result_queue))
+        workers[i].start()
 

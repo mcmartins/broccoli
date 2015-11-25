@@ -1,23 +1,23 @@
 {
-  "jobName": "Name",
-  "jobDescription": "Description",
+  "jobName": "Job Name",
+  "jobDescription": "Job Description",
   "workingDir": "/tmp/autonomous/",
   "timeout": 10,
   "waitForAll": false,
   "tasks": [{
-    "taskName": "T1",
-    "taskDescription": "Run Prover9 to generate consequences and find new proofs",
+    "taskName": "Task 1 Name",
+    "taskDescription": "Task 1 Description",
     "command": "prover9 -f Axioms.in > Axioms.out",
     "guidance": [{
-      "taskName": "T1.1",
-      "taskDescription": "Run Prover and Mace for each line produced on previous task and look for new theorems",
-      "generate": {
-        "forEach": "line",
-        "in": "Axioms.out",
+      "taskName": "Task 1.1 Name",
+      "taskDescription": "Task 1.1 Description",
+      "do": {
+        "read": "Axioms.out",
+        "for": "line",
         "matching": "^(regex)$",
-        "replaceIn": "From_Axioms.in",
-        "placeholder": "$placeholder",
-        "executeCommands": ["prover9 -f From_Axioms_$line.in > From_Axioms_$line_prover.out", "mace4 -f From_Axioms_$line.in > From_Axioms_$line_mace.out"]
+        "write": "From_Axioms.in",
+        "replace": "$placeholder",
+        "commands": ["prover9 -f From_Axioms_$line.in > From_Axioms_$line_prover.out", "mace4 -f From_Axioms_$line.in > From_Axioms_$line_mace.out"]
       }
     }]
   }]

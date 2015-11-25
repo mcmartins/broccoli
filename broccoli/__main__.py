@@ -25,6 +25,7 @@ if __name__ == '__main__':
     parser.add_argument('-i', '--input', help='input json file / string', action='store',
                         dest='input', required=True)
     args = parser.parse_args()
-    job = broccoli.parser.parse(args.input)
-    broccoli.logger.initialize(job, args.verbose)
+    config = broccoli.parser.parse(args.input)
+    broccoli.logger.initialize(config)
+    job = broccoli.job.Job(config)
     broccoli.runner.Runner(job)

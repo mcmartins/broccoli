@@ -3,6 +3,7 @@ import os.path
 import logging
 import jsonschema
 import pkg_resources
+import logger
 from job import Job
 from task import Task
 
@@ -62,22 +63,7 @@ def parse(arg):
     __validate(config)
     logging.info('Parsing input...')
     logging.debug('Input is: %s', str(config))
-    broccoli_job = Job(config.get('jobName'), config.get('jobDescription'), config.get('workingDir'), config.get('timeout'))
-    for task in config.get('tasks'):
-        broccoli_job.add_task(
-            __build_task(Task(task.get('taskName'), task.get('command'), task.get('wait')), task.get('guidance')))
-    logging.info('New Job created: %s', str(broccoli_job.name))
-    return broccoli_job
-
-
-def __build_task(parent, guidance):
-    if guidance:
-        for guidanceTask in guidance:
-            task = Task(guidanceTask.get('taskName'), guidanceTask.get('command'), guidanceTask.get('wait'))
-            parent.add_guidance(task)
-            __build_task(task, guidanceTask.get('guidance'))
-    return parent
-
+    return config
 
 def __validate(input_data):
     schema_path = os.path.join('schema', 'broccoli_schema.json')

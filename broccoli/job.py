@@ -1,5 +1,6 @@
 import uuid
 import logging
+import multiprocessing
 import broccoli.task
 
 """
@@ -25,23 +26,15 @@ class Job:
        :param timeout
     """
 
-    def __init__(self, name='Anonymous', description='', wd='/tmp/', timeout=3600):
-        self.id = uuid.uuid4()
-        self.name = name
-        self.description = description
-        self.wd = wd
-        self.timeout = timeout
-        self.tasks = []
-
     def __init__(self, jobConfig):
         self.id = uuid.uuid4()
         self.name = jobConfig.get('jobName')
         self.description = jobConfig.get('jobDescription')
         self.wd = jobConfig.get('workingDir')
         self.timeout = jobConfig.get('timeout')
-        self.tasks = []
+        self.tasks = multiprocessing.Queue()
         for taskConfig in jobConfig.get('tasks'):
-            self.tasks.append(broccoli.task.Task(taskConfig))
+            self.tasks.put(broccoli.task.Task(taskConfig))
         logging.info('New Job created: %s', str(self.name))
 
 
