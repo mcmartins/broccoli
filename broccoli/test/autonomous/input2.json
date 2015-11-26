@@ -11,10 +11,16 @@
     "guidance": [{
       "taskName": "T1.1",
       "taskDescription": "Run Prover and Mace for each line produced on previous task and look for new theorems",
-      "do": {
-        "read": "/tmp/autonomous/",
-        "forEach": "file",
-        "matching": "*.in",
+      "execute": {
+        "forEach": {
+          "select": "file",
+          "in": "/tmp/autonomous/",
+          "matching": "*.in"
+        },
+        "do": {
+          
+          
+        },
         "commands": ["prover9 -f $file > $file_prover.out", "mace4 -f $file > $file_mace.out"]
       }
     }]

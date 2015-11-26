@@ -7,19 +7,23 @@
   "tasks": [{
     "taskName": "Task 1 Name",
     "taskDescription": "Task 1 Description",
-    "do":{
+    "execute":{
       "commands": ["prover9 -f Axioms.in > Axioms.out"]
     },
     "guidance": [{
       "taskName": "Task 1.1 Name",
       "taskDescription": "Task 1.1 Description",
-      "do": {
-        "read": "test/autonomous/Axioms.in",
-        "forEach": "line",
-        "matching": "end_of_list",
-        "write": "test/autonomous/From_Axioms.in",
-        "replace": "$placeholder",
-        "commands": ["prover9 -f $file > $file_prover.out", "mace4 -f $file.in > $file_mace.out"]
+      "execute": {
+        "commands": ["prover9 -f From_Axioms.in > From_Axioms.out", "mace4 -f From_Axioms.in > From_Axioms.out"]
+        "forEach": {
+          "select": "line",
+          "in": "Axioms.out",
+          "matching": "^given.*?:\s*\d+([^.\#]*)[\#[^.]*]?\.\s*\[.*?\]\.",
+          "do": {
+           "write": "From_Axioms.in",
+           "replace": "$placeholder",
+          }
+        }
       }
     }]
   }]

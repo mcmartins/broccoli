@@ -7,7 +7,6 @@ x * e = x.
 x * x' = e.
 x' * x = e.
 x * x = x.
-$placeholder
 
 end_of_list.
 
@@ -16,4 +15,3 @@ formulas(goals).
 x * y = y * x.
 
 end_of_list.
-

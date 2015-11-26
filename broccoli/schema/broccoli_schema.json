@@ -15,12 +15,14 @@
         "taskName": {
           "type": "string",
           "minLength": 1,
+          "maxLength": 10,
           "title": "Task Name",
           "description": "A Name for the Task"
         },
         "taskDescription": {
           "type": "string",
           "minLength": 1,
+          "maxLength": 255,
           "title": "Task Description",
           "description": "Description of the Task"
         },
@@ -29,7 +31,7 @@
           "title": "Wait for other Tasks, at same level, to complete",
           "description": "Set it to true if this Task should wait for others to complete before moving on to guidance"
         },
-        "do": {
+        "execute": {
           "title": "Run",
           "description": "What to do to run this task. It can be a simple command, read a file line by line and start process or read a set of files and start processes",
           "additionalProperties": false,
@@ -103,12 +105,14 @@
     "jobName": {
       "type": "string",
       "minLength": 1,
+      "maxLength": 10,
       "title": "Job Name",
       "description": "The Job Name is used to identify the Job running"
     },
     "jobDescription": {
       "type": "string",
       "minLength": 1,
+      "maxLength": 255,
       "title": "Job Description",
       "description": "The Job Description is used to provide more details on the Job to perform"
     },
