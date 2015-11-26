@@ -3,7 +3,7 @@
   "jobDescription": "Description",
   "workingDir": "/tmp/autonomous/",
   "timeout": 10,
-  "waitForAll": false,
+  "verbose": false,
   "tasks": [{
     "taskName": "T1",
     "taskDescription": "Run Prover9 to generate consequences and find new proofs",
@@ -15,7 +15,7 @@
         "read": "/tmp/autonomous/",
         "forEach": "file",
         "matching": "*.in",
-        "commands": ["prover9 -f $file.in > $file_prover.out", "mace4 -f $file.in > $file_mace.out"]
+        "commands": ["prover9 -f $file > $file_prover.out", "mace4 -f $file > $file_mace.out"]
       }
     }]
   }]

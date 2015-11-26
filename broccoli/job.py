@@ -1,8 +1,3 @@
-import uuid
-import logging
-import multiprocessing
-import broccoli.task
-
 """
     broccoli.Job
     ~~~~~~~~~~~~~
@@ -16,6 +11,11 @@ import broccoli.task
     :license: Apache 2.0, see LICENSE for more details
 """
 
+import uuid
+import logging
+import multiprocessing
+from task import Task
+
 
 class Job:
     """
@@ -26,15 +26,15 @@ class Job:
        :param timeout
     """
 
-    def __init__(self, jobConfig):
+    def __init__(self, job_config):
         self.id = uuid.uuid4()
-        self.name = jobConfig.get('jobName')
-        self.description = jobConfig.get('jobDescription')
-        self.wd = jobConfig.get('workingDir')
-        self.timeout = jobConfig.get('timeout')
-        self.tasks = multiprocessing.Queue()
-        for taskConfig in jobConfig.get('tasks'):
-            self.tasks.put(broccoli.task.Task(taskConfig))
+        self.name = job_config.get('jobName')
+        self.description = job_config.get('jobDescription')
+        self.wd = job_config.get('workingDir')
+        self.timeout = job_config.get('timeout')
+        self.tasks = [] #multiprocessing.Queue()
+        for task_config in job_config.get('tasks'):
+            self.tasks.append(Task(task_config))
         logging.info('New Job created: %s', str(self.name))
 
 

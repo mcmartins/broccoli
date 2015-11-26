@@ -13,7 +13,7 @@ class Worker(multiprocessing.Process):
         while (not self.kill_received) and (not self.work_queue.empty()):
             try:
                 task = self.work_queue.get_nowait()
-            except:
+            except Exception:
                 break
 
             for command in task.get_commands():
@@ -22,14 +22,16 @@ class Worker(multiprocessing.Process):
 
     def __start_sub_process(self, command):
         try:
+            # invoke runner
             return commands.getoutput(command)
-        except:
-            return "Error executing command %s" % (command)
+        except Exception:
+            return "Error executing command %s" % command
 
 def run(job, num_processes=4):
     work_queue = multiprocessing.Queue()
     result_queue = multiprocessing.Queue()
-    for task in job.pop_tasks():
+    tasks = job.pop_tasks()
+    for task in tasks:
         work_queue.put(task)
 
     workers = []

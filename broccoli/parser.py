@@ -3,9 +3,8 @@ import os.path
 import logging
 import jsonschema
 import pkg_resources
-import logger
 from job import Job
-from task import Task
+
 
 """
     broccoli.parser
@@ -65,6 +64,7 @@ def parse(arg):
     logging.debug('Input is: %s', str(config))
     return config
 
+
 def __validate(input_data):
     schema_path = os.path.join('schema', 'broccoli_schema.json')
     schema = pkg_resources.resource_string(__name__, schema_path)
@@ -72,3 +72,16 @@ def __validate(input_data):
         jsonschema.validate(input_data, json.loads(schema))
     except jsonschema.exceptions.ValidationError, e:
         raise MalformedJSONInput(e.message)
+
+
+if __name__ == '__main__':
+    import sys
+    config = parse(sys.argv[1])
+    job = Job(config)
+    tasks = job.pop_tasks()
+    task = tasks.pop(0)
+    commands = task.get_commands()
+    guidance_tasks = task.pop_guidance()
+    guidance_task = guidance_tasks.pop(0)
+    guidance_commands = guidance_task.get_commands()
+    raise InvalidInput('Input provided is not an existing file or valid JSON string!')

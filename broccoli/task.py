@@ -6,6 +6,7 @@ import fileinput
 import shutil
 import glob
 import string
+import os
 
 """
     broccoli.Task
@@ -24,6 +25,11 @@ import string
 
 
 class Task:
+
+    @staticmethod
+    def generate_unique_id():
+        return str(uuid.uuid4())
+
     """
        Task constructor
 
@@ -31,47 +37,56 @@ class Task:
        :param command
     """
 
-    def __init__(self, taskConfig):
+    def __init__(self, task_config):
         self.id = uuid.uuid4()
-        self.name = taskConfig.get('taskName')
-        self.description = taskConfig.get('taskDescription')
-        self.wait = taskConfig.get('wait')
-        self.run = taskConfig.get('run')
-        self.guidance = multiprocessing.Queue()
-        for guidanceConfig in taskConfig.get('guidance'):
-            self.guidance.put(Task(guidanceConfig))
+        self.name = task_config.get('taskName')
+        self.description = task_config.get('taskDescription')
+        self.wait = task_config.get('wait')
+        self.do = task_config.get('do')
+        self.guidance = [] #multiprocessing.Queue()
+        guidance_config = task_config.get('guidance')
+        if guidance_config:
+            for config in guidance_config:
+                self.guidance.append(Task(config))
         logging.debug('New Task created: %s', str(self.name))
 
     def get_commands(self):
         to_execute = []
-        # look matching regex in each line of a file
-        all_lines = [re.findall(r'f\(\s*([^,]+)\s*,\s*([^,]+)\s*\)', line) for line in open('fileToRead')]
-        for line in all_lines:
-            # create a copy of the file with the same name plus
-            new_filename = self.__format_filename(line+'fileToWrite')
-            shutil.copy2('fileToWrite', new_filename)
-            
-            # get commands to execute
-            commands = []
-            for command in commands:
-                # replace placeholder with actual created file
-                to_execute.append(command.replace('$file', new_filename))
-            
-            # look in side the new file for the placeholder and replace it
-            for l in fileinput.input(new_filename, inplace=True):
-                print(line.replace('placeholder', l), '')
+        commands = [command for command in self.do.get('commands')]
+        matching_regex = r"{0}".format(self.do.get('matching'))
+        read = self.do.get('read')
+        if read:
+            if os.path.isfile(read):
+                # look matching regex in each line of a file
+                write = self.do.get('write')
+                replace = self.do.get('replace')
+                all_matching_lines = [re.findall(matching_regex, line) for line in open(read)]
+                # create a copy of the file with the same name plus
+                for line in filter(None, all_matching_lines):
+                    new_filename = self.__format_filename(self.generate_unique_id() + write)
+                    shutil.copy2(write, new_filename)
 
-        # look for files matching the regex in a dir
-        all_files = [name for name in glob.glob('dir/*[0-9].*')]
-        for file in all_files:
-            commands = []
-            for command in commands:
-                # replace placeholder with matching file
-                to_execute.append(command.replace('$file', file))
-        
+                    # get commands to execute
+                    for command in commands:
+                        # replace placeholder with actual created file
+                        to_execute.append(command.replace('$file', new_filename))
+
+                    # look in side the new file for the placeholder and replace it
+                    for l in fileinput.input(new_filename, inplace=True):
+                        print(l.replace(replace, str(line)), '')
+            elif os.path.isdir(read):
+                # look for files matching the regex in a dir
+                all_matching_files = [name for name in glob.glob(os.path.join(read, matching_regex))]
+                for f in all_matching_files:
+                    # replace placeholder with matching file
+                    for command in commands:
+                        to_execute.append(command.replace('$file', f))
+        else:
+            to_execute = commands
         return to_execute
-        
-    def __format_filename(self, s):
+
+    @staticmethod
+    def __format_filename(s):
         """
         Take a string and return a valid filename constructed from the string.
         Uses a whitelist approach: any characters not present in valid_chars are
@@ -82,9 +97,10 @@ class Task:
         and append a file extension like '.txt', so I avoid the potential of using
         an invalid filename.
         """
-        valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
+        valid_chars = "_.() %s%s" % (string.ascii_letters, string.digits)
         filename = ''.join(c for c in s if c in valid_chars)
-        filename = filename.replace(' ','_') # I don't like spaces in filenames.
+        filename = filename.replace(' ', '_')  # I don't like spaces in filenames.
+        filename = os.path.splitext(filename)[0]
         return filename
 
     """
