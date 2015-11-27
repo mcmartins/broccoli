@@ -70,7 +70,7 @@ class Task:
 
                     # create a copy of the file with the same name plus
                     for line in filter(None, all_matching_lines):
-                        new_filename = self.__format_filename(self.generate_unique_id() + write)
+                        new_filename = self.__format_filename(self.name + self.generate_unique_id() + write)
                         shutil.copy2(write, new_filename)
 
                         # get commands to execute
@@ -84,7 +84,6 @@ class Task:
                             f.seek(0)
                             f.write(text.replace(replace, str(line)))
                             f.close()
-                        break
 
                 elif os.path.isdir(read):
                     # look for files matching the regex in a dir
