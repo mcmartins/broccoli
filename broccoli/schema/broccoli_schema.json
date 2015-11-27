@@ -15,7 +15,7 @@
         "taskName": {
           "type": "string",
           "minLength": 1,
-          "maxLength": 10,
+          "maxLength": 100,
           "title": "Task Name",
           "description": "A Name for the Task"
         },
@@ -38,37 +38,53 @@
           "type": "object",
           "properties": {
             "forEach": {
-              "type": "string",
               "title": "For Each",
               "description": "",
-              "enum": [
-                "line",
-                "file"
-              ]
-            },
-            "read": {
-              "type": "string",
-              "minLength": 1,
-              "title": "In",
-              "description": ""
-            },
-            "matching": {
-              "type": "string",
-              "minLength": 1,
-              "title": "Matching Regex",
-              "description": ""
-            },
-            "write": {
-              "type": "string",
-              "minLength": 1,
-              "title": "File to replace",
-              "description": ""
-            },
-            "replace": {
-              "type": "string",
-              "minLength": 1,
-              "title": "Placeholder to replace",
-              "description": ""
+              "additionalProperties": false,
+              "type": "object",
+              "properties": {
+                "select": {
+                  "type": "string",
+                  "title": "Select",
+                  "description": "",
+                  "enum": [
+                    "line",
+                    "file"
+                  ]
+                },
+                "in": {
+                  "type": "string",
+                  "minLength": 1,
+                  "title": "In",
+                  "description": ""
+                },
+                "matching": {
+                  "type": "string",
+                  "minLength": 1,
+                  "title": "Matching Regex",
+                  "description": ""
+                },
+                "do": {
+                  "title": "Do",
+                  "description": "",
+                  "additionalProperties": false,
+                  "type": "object",
+                  "properties": {
+                    "write": {
+                      "type": "string",
+                      "minLength": 1,
+                      "title": "File to replace",
+                      "description": ""
+                    },
+                    "replace": {
+                      "type": "string",
+                      "minLength": 1,
+                      "title": "Placeholder to replace",
+                      "description": ""
+                    }
+                  }
+                }
+              }
             },
             "commands": {
               "type": "array",
@@ -105,7 +121,7 @@
     "jobName": {
       "type": "string",
       "minLength": 1,
-      "maxLength": 10,
+      "maxLength": 100,
       "title": "Job Name",
       "description": "The Job Name is used to identify the Job running"
     },

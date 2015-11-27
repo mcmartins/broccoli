@@ -1,0 +1,189 @@
+============================== Prover9 ===============================
+Prover9 (64) version 2009-11A, November 2009.
+Process 21474 was started by mcmartins on centos.virtualbox.development,
+Thu Nov 26 23:46:39 2015
+The command was "prover9 -f Axioms.in".
+============================== end of head ===========================
+
+============================== INPUT =================================
+
+% Reading from file Axioms.in
+
+assign(max_seconds,5).
+
+formulas(sos).
+(x * y) * z = x * (y * z).
+x * e = e * x.
+x * e = x.
+x * x' = e.
+x' * x = e.
+x * x = x.
+end_of_list.
+
+formulas(goals).
+x * y = y * x.
+end_of_list.
+
+============================== end of input ==========================
+
+============================== PROCESS NON-CLAUSAL FORMULAS ==========
+
+% Formulas that are not ordinary clauses:
+1 x * y = y * x # label(non_clause) # label(goal).  [goal].
+
+============================== end of process non-clausal formulas ===
+
+============================== PROCESS INITIAL CLAUSES ===============
+
+% Clauses before input processing:
+
+formulas(usable).
+end_of_list.
+
+formulas(sos).
+(x * y) * z = x * (y * z).  [assumption].
+x * e = e * x.  [assumption].
+x * e = x.  [assumption].
+x * x' = e.  [assumption].
+x' * x = e.  [assumption].
+x * x = x.  [assumption].
+c2 * c1 != c1 * c2.  [deny(1)].
+end_of_list.
+
+formulas(demodulators).
+end_of_list.
+
+============================== PREDICATE ELIMINATION =================
+
+No predicates eliminated.
+
+============================== end predicate elimination =============
+
+Auto_denials:  (no changes).
+
+Term ordering decisions:
+Predicate symbol precedence:  predicate_order([ = ]).
+Function symbol precedence:  function_order([ e, c1, c2, *, ' ]).
+After inverse_order: Function symbol precedence:  function_order([ e, c1, c2, *, ' ]).
+Unfolding symbols: (none).
+
+Auto_inference settings:
+  % set(paramodulation).  % (positive equality literals)
+
+Auto_process settings:  (no changes).
+
+kept:      2 (x * y) * z = x * (y * z).  [assumption].
+           3 x * e = e * x.  [assumption].
+kept:      4 e * x = x * e.  [copy(3),flip(a)].
+kept:      5 x * e = x.  [assumption].
+kept:      6 x * x' = e.  [assumption].
+kept:      7 x' * x = e.  [assumption].
+kept:      8 x * x = x.  [assumption].
+kept:      9 c2 * c1 != c1 * c2.  [deny(1)].
+kept:      10 e * x = x.  [back_rewrite(4),rewrite([5(4)])].
+
+============================== end of process initial clauses ========
+
+============================== CLAUSES FOR SEARCH ====================
+
+% Clauses after input processing:
+
+formulas(usable).
+end_of_list.
+
+formulas(sos).
+2 (x * y) * z = x * (y * z).  [assumption].
+5 x * e = x.  [assumption].
+6 x * x' = e.  [assumption].
+7 x' * x = e.  [assumption].
+8 x * x = x.  [assumption].
+9 c2 * c1 != c1 * c2.  [deny(1)].
+10 e * x = x.  [back_rewrite(4),rewrite([5(4)])].
+end_of_list.
+
+formulas(demodulators).
+2 (x * y) * z = x * (y * z).  [assumption].
+5 x * e = x.  [assumption].
+6 x * x' = e.  [assumption].
+7 x' * x = e.  [assumption].
+8 x * x = x.  [assumption].
+10 e * x = x.  [back_rewrite(4),rewrite([5(4)])].
+end_of_list.
+
+============================== end of clauses for search =============
+
+============================== SEARCH ================================
+
+% Starting search at 0.00 seconds.
+
+given #1 (I,wt=11): 2 (x * y) * z = x * (y * z).  [assumption].
+
+given #2 (I,wt=5): 5 x * e = x.  [assumption].
+
+given #3 (I,wt=6): 6 x * x' = e.  [assumption].
+
+given #4 (I,wt=6): 7 x' * x = e.  [assumption].
+
+given #5 (I,wt=5): 8 x * x = x.  [assumption].
+
+given #6 (I,wt=7): 9 c2 * c1 != c1 * c2.  [deny(1)].
+
+given #7 (I,wt=5): 10 e * x = x.  [back_rewrite(4),rewrite([5(4)])].
+
+given #8 (A,wt=8): 11 x * (x' * y) = y.  [para(6(a,1),2(a,1,1)),rewrite([10(2)]),flip(a)].
+
+given #9 (F,wt=3): 22 c2 != c1.  [back_rewrite(9),rewrite([20(3),20(4)]),flip(a)].
+
+given #10 (T,wt=3): 21 e = x.  [back_rewrite(18),rewrite([19(1),19(2)])].
+
+============================== PROOF =================================
+
+% Proof 1 at 0.00 (+ 0.01) seconds.
+% Length of proof is 17.
+% Level of proof is 8.
+% Maximum clause weight is 11.000.
+% Given clauses 10.
+
+1 x * y = y * x # label(non_clause) # label(goal).  [goal].
+2 (x * y) * z = x * (y * z).  [assumption].
+3 x * e = e * x.  [assumption].
+4 e * x = x * e.  [copy(3),flip(a)].
+5 x * e = x.  [assumption].
+6 x * x' = e.  [assumption].
+8 x * x = x.  [assumption].
+9 c2 * c1 != c1 * c2.  [deny(1)].
+10 e * x = x.  [back_rewrite(4),rewrite([5(4)])].
+11 x * (x' * y) = y.  [para(6(a,1),2(a,1,1)),rewrite([10(2)]),flip(a)].
+18 x'' = x.  [para(6(a,1),11(a,1,2)),rewrite([5(2)]),flip(a)].
+19 x' = e.  [para(8(a,1),11(a,1,2)),rewrite([6(2)]),flip(a)].
+20 x * y = y.  [para(11(a,1),11(a,1,2)),rewrite([19(2),19(3),10(3)])].
+21 e = x.  [back_rewrite(18),rewrite([19(1),19(2)])].
+22 c2 != c1.  [back_rewrite(9),rewrite([20(3),20(4)]),flip(a)].
+23 c1 != e.  [para(21(a,2),22(a,1)),flip(a)].
+24 $F.  [resolve(23,a,21,a(flip))].
+
+============================== end of proof ==========================
+
+============================== STATISTICS ============================
+
+Given=10. Generated=65. Kept=21. proofs=1.
+Usable=2. Sos=2. Demods=2. Limbo=0, Disabled=23. Hints=0.
+Kept_by_rule=0, Deleted_by_rule=0.
+Forward_subsumed=44. Back_subsumed=4.
+Sos_limit_deleted=0. Sos_displaced=0. Sos_removed=0.
+New_demodulators=17 (1 lex), Back_demodulated=12. Back_unit_deleted=0.
+Demod_attempts=390. Demod_rewrites=93.
+Res_instance_prunes=0. Para_instance_prunes=0. Basic_paramod_prunes=0.
+Nonunit_fsub_feature_tests=0. Nonunit_bsub_feature_tests=0.
+Megabytes=0.06.
+User_CPU=0.00, System_CPU=0.01, Wall_clock=0.
+
+============================== end of statistics =====================
+
+============================== end of search =========================
+
+THEOREM PROVED
+
+Exiting with 1 proof.
+
+Process 21474 exit (max_proofs) Thu Nov 26 23:46:39 2015

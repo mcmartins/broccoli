@@ -2,11 +2,13 @@ import uuid
 import logging
 import multiprocessing
 import re
-import fileinput
+import codecs
 import shutil
 import glob
 import string
 import os
+import urllib
+
 
 """
     broccoli.Task
@@ -25,7 +27,6 @@ import os
 
 
 class Task:
-
     @staticmethod
     def generate_unique_id():
         return str(uuid.uuid4())
@@ -42,8 +43,8 @@ class Task:
         self.name = task_config.get('taskName')
         self.description = task_config.get('taskDescription')
         self.wait = task_config.get('wait')
-        self.do = task_config.get('do')
-        self.guidance = [] #multiprocessing.Queue()
+        self.execute = task_config.get('execute')
+        self.guidance = []  # multiprocessing.Queue()
         guidance_config = task_config.get('guidance')
         if guidance_config:
             for config in guidance_config:
@@ -52,37 +53,48 @@ class Task:
 
     def get_commands(self):
         to_execute = []
-        commands = [command for command in self.do.get('commands')]
-        matching_regex = r"{0}".format(self.do.get('matching'))
-        read = self.do.get('read')
-        if read:
-            if os.path.isfile(read):
-                # look matching regex in each line of a file
-                write = self.do.get('write')
-                replace = self.do.get('replace')
-                all_matching_lines = [re.findall(matching_regex, line) for line in open(read)]
-                # create a copy of the file with the same name plus
-                for line in filter(None, all_matching_lines):
-                    new_filename = self.__format_filename(self.generate_unique_id() + write)
-                    shutil.copy2(write, new_filename)
+        commands = [command for command in self.execute.get('commands')]
+        for_each = self.execute.get('forEach')
+        if for_each:
+            matching_regex = r"{0}".format(urllib.unquote(for_each.get('matching'))) # ^given.*?:\s*\d+([^.\#]*)[\#[^.]*]?\.\s*\[.*?\]\.
+            read = for_each.get('in')
+            if read:
+                if os.path.isfile(read):
+                    # look matching regex in each line of a file
+                    do = for_each.get('do')
+                    write = do.get('write')
+                    replace = do.get('replace')
+                    with open(read, "r") as f:
+                        all_matching_lines = re.findall(matching_regex, f.read(), re.MULTILINE)
+                        f.close()
 
-                    # get commands to execute
-                    for command in commands:
-                        # replace placeholder with actual created file
-                        to_execute.append(command.replace('$file', new_filename))
+                    # create a copy of the file with the same name plus
+                    for line in filter(None, all_matching_lines):
+                        new_filename = self.__format_filename(self.generate_unique_id() + write)
+                        shutil.copy2(write, new_filename)
 
-                    # look in side the new file for the placeholder and replace it
-                    for l in fileinput.input(new_filename, inplace=True):
-                        print(l.replace(replace, str(line)), '')
-            elif os.path.isdir(read):
-                # look for files matching the regex in a dir
-                all_matching_files = [name for name in glob.glob(os.path.join(read, matching_regex))]
-                for f in all_matching_files:
-                    # replace placeholder with matching file
-                    for command in commands:
-                        to_execute.append(command.replace('$file', f))
-        else:
-            to_execute = commands
+                        # get commands to execute
+                        for command in commands:
+                            # replace placeholder with actual created file
+                            to_execute.append(command.replace('$file', new_filename).replace('$line', new_filename))
+
+                        # look in side the new file for the placeholder and replace it
+                        with codecs.open(new_filename, 'rw+', encoding='utf8') as f:
+                            text = f.read()
+                            f.seek(0)
+                            f.write(text.replace(replace, str(line)))
+                            f.close()
+                        break
+
+                elif os.path.isdir(read):
+                    # look for files matching the regex in a dir
+                    all_matching_files = [name for name in glob.glob(os.path.join(read, matching_regex))]
+                    for f in all_matching_files:
+                        # replace placeholder with matching file
+                        for command in commands:
+                            to_execute.append(command.replace('$file', f))
+            else:
+                to_execute = commands
         return to_execute
 
     @staticmethod
