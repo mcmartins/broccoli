@@ -43,7 +43,7 @@ class Task:
         self.name = task_config.get('taskName')
         self.description = task_config.get('taskDescription')
         self.wait = task_config.get('wait')
-        self.execute = task_config.get('execute')
+        self.preparation = task_config.get('preparation')
         self.guidance = []  # multiprocessing.Queue()
         guidance_config = task_config.get('guidance')
         if guidance_config:

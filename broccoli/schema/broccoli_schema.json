@@ -6,6 +6,77 @@
   "additionalProperties": false,
   "type": "object",
   "definitions": {
+    "none": {
+      "title": "File",
+      "description": "Search in",
+      "type": "object"
+    },
+    "filterFile": {
+      "title": "File",
+      "description": "Search in",
+      "type": "object",
+      "properties": {
+        "searchDirectory": {
+          "title": "Directory",
+          "description": "Please enter the path where you want to search for files",
+          "type": "string",
+          "minLength": 1
+        },
+        "pattern": {
+          "title": "Pattern",
+          "description": "Please enter the pattern of the files you want to match",
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "searchDirectory",
+        "pattern"
+      ]
+    },
+    "filterLine": {
+      "title": "Line",
+      "description": "Search in",
+      "type": "object",
+      "properties": {
+        "filterFile": {
+          "title": "File to read",
+          "description": "Please specify the file you want to filer",
+          "type": "string",
+          "minLength": 1
+        },
+        "pattern": {
+          "title": "Matching Regex",
+          "description": "This regex should match exactly what you want to extract from a file",
+          "type": "string",
+          "minLength": 1
+        },
+        "writeFile": {
+          "title": "File to write",
+          "description": "Please specify the file you want to write the matching results",
+          "type": "string",
+          "minLength": 1
+        },
+        "placeholder": {
+          "title": "Placeholder",
+          "description": "The placeholder you want to be replaced with the matched results",
+          "type": "string",
+          "minLength": 1
+        },
+        "copy": {
+          "title": "Copy file for each Match?",
+          "description": "One copy of the file per regex match?",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "filterFile",
+        "pattern",
+        "writeFile",
+        "placeholder",
+        "copy"
+      ]
+    },
     "task": {
       "title": "Describes a Task",
       "description": "A Task is a simple process holding a name, a description, steps to run a command and following Sub Tasks (Guidance Tasks)",
@@ -31,75 +102,51 @@
           "description": "Set it to true if this Task should wait for others to complete before moving on to guidance",
           "type": "boolean"
         },
-        "prepare": {
-          "title": "Prepare",
-          "description": "What to do to before run this task. It can be a simple command, read a file line by line and start process or read a set of files and start processes",
+        "timeout": {
+          "title": "Timeout",
+          "description": "The Timeout in seconds for the executor to trigger the kill of all processes running created for this task",
+          "type": "integer",
+          "multipleOf": 1,
+          "maximum": 86400,
+          "minimum": 1,
+          "exclusiveMaximum": false,
+          "exclusiveMinimum": false
+        },
+        "preparation": {
+          "title": "What do you want to do?",
+          "description": "What to do to before run this task. It can be a simple command, read a file line by line or search for files to process",
           "additionalProperties": false,
           "type": "object",
-          "properties": {
-            "forEach": {
-              "title": "For Each",
+          "oneOf": [
+            {
+              "title": "Just run commands",
               "description": "",
-              "additionalProperties": false,
-              "type": "object",
-              "properties": {
-                "select": {
-                  "title": "Select",
-                  "description": "",
-                  "type": "string",
-                  "enum": [
-                    "line",
-                    "file"
-                  ]
-                },
-                "in": {
-                  "title": "In",
-                  "description": "",
-                  "type": "string",
-                  "minLength": 1
-                },
-                "matching": {
-                  "title": "Matching Regex",
-                  "description": "",
-                  "type": "string",
-                  "minLength": 1
-                },
-                "do": {
-                  "title": "Do",
-                  "description": "",
-                  "additionalProperties": false,
-                  "type": "object",
-                  "properties": {
-                    "write": {
-                      "title": "File to replace",
-                      "description": "",
-                      "type": "string",
-                      "minLength": 1
-                    },
-                    "replace": {
-                      "title": "Placeholder",
-                      "description": "",
-                      "type": "string",
-                      "minLength": 1
-                    }
-                  }
-                }
-              }
+              "$ref": "#/definitions/none"
             },
-            "commands": {
-              "title": "Commands",
-              "description": "",
-              "type": "array",
-              "minItems": 1,
-              "uniqueItems": false,
-              "additionalItems": false,
-              "items": {
-                "description": "",
-                "title": "Command",
-                "type": "string",
-                "minLength": 1
-              }
+            {
+              "title": "Search for files",
+              "description": "Please use '$file' placeholder in the commands section if you want to use the matched files",
+              "$ref": "#/definitions/filterFile"
+            },
+            {
+              "title": "Match lines in a file",
+              "description": "Please use '$file' placeholder in the commands section if you want to use the new files created",
+              "$ref": "#/definitions/filterLine"
             }
+          ]
+        },
+        "commands": {
+          "title": "Commands",
+          "description": "The commands, or tools, you want to execute",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": false,
+          "additionalItems": false,
+          "items": {
+            "description": "The command to execute",
+            "title": "Command",
+            "type": "string",
+            "minLength": 1
           }
         },
         "guidance": {
@@ -117,76 +164,22 @@
       },
       "required": [
         "taskName",
-        "tasks"
+        "timeout",
+        "commands"
       ]
-    },
-    "job": {
-      "jobName": {
-        "title": "Job Name",
-        "description": "The Job Name is used to identify the Job running",
-        "type": "string",
-        "minLength": 1,
-        "maxLength": 100
-      },
-      "jobDescription": {
-        "title": "Job Description",
-        "description": "The Job Description is used to provide more details on the Job to perform",
-        "type": "string",
-        "minLength": 1,
-        "maxLength": 255
-      },
-      "workingDir": {
-        "title": "Working directory",
-        "description": "The Working directory where the Job will run. All paths will be relative from here",
-        "type": "string",
-        "minLength": 1
-      },
-      "timeout": {
-        "title": "Timeout",
-        "description": "The Timeout in seconds for the executor to trigger the kill of all processes running",
-        "type": "integer",
-        "multipleOf": 1,
-        "maximum": 86400,
-        "minimum": 1,
-        "exclusiveMaximum": false,
-        "exclusiveMinimum": false
-      },
-      "verbose": {
-        "title": "Verbose",
-        "description": "Set it to true if you want to log full information on the processing",
-        "type": "boolean"
-      },
-      "tasks": {
-        "title": "Tasks",
-        "description": "The Tasks to execute within this Job",
-        "type": "array",
-        "minItems": 1,
-        "uniqueItems": false,
-        "additionalItems": false,
-        "items": {
-          "title": "Task",
-          "description": "A Task is a simple process holding a name, a description, steps to run a command and following Sub Tasks (Guidance Tasks)",
-          "$ref": "#/definitions/task",
-          "additionalProperties": false
-        }
-      }
-    },
-    "required": [
-      "jobName",
-      "tasks"
-    ]
+    }
   },
   "properties": {
-    "name": {
-      "title": "Work Name",
-      "description": "The Work Name is used to identify the Work running",
+    "jobName": {
+      "title": "Job Name",
+      "description": "The Job Name is used to identify the Job running",
       "type": "string",
       "minLength": 1,
       "maxLength": 100
     },
-    "description": {
-      "title": "Work Description",
-      "description": "The Work Description is used to provide more details on the Work to perform",
+    "jobDescription": {
+      "title": "Job Description",
+      "description": "The Job Description is used to provide more details on the Job to perform",
       "type": "string",
       "minLength": 1,
       "maxLength": 255
@@ -199,7 +192,7 @@
     },
     "timeout": {
       "title": "Timeout",
-      "description": "The Timeout in seconds for the executor to trigger the kill of all processes running",
+      "description": "The Timeout in seconds for the executor to trigger the kill of all processes running for this Job",
       "type": "integer",
       "multipleOf": 1,
       "maximum": 86400,
@@ -212,9 +205,9 @@
       "description": "Set it to true if you want to log full information on the processing",
       "type": "boolean"
     },
-    "jobs": {
-      "title": "Jobs",
-      "description": "The Jobs to execute within this Work",
+    "tasks": {
+      "title": "Tasks",
+      "description": "The Jobs to execute within this Job",
       "type": "array",
       "minItems": 1,
       "uniqueItems": false,
@@ -222,15 +215,16 @@
       "items": {
         "title": "Task",
         "description": "A Task is a simple process holding a name, a description, steps to run a command and following Sub Tasks (Guidance Tasks)",
-        "$ref": "#/definitions/job",
+        "$ref": "#/definitions/task",
         "additionalProperties": false
       }
     }
   },
   "required": [
-    "name",
+    "jobName",
     "workingDir",
     "timeout",
-    "jobs"
+    "verbose",
+    "tasks"
   ]
 }

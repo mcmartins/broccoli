@@ -1,30 +1,39 @@
 {
-  "jobName": "Job Name",
-  "jobDescription": "Job Description",
-  "workingDir": "/media/sf_GitHub/broccoli/broccoli",
-  "timeout": 10,
-  "verbose": false,
-  "tasks": [{
-    "taskName": "Task 1 Name",
-    "taskDescription": "Task 1 Description",
-    "execute":{
-      "commands": ["prover9 -f Axioms.in > Axioms.out"]
-    },
-    "guidance": [{
-      "taskName": "Task 1.1 Name",
-      "taskDescription": "Task 1.1 Description",
-      "execute": {
-        "commands": ["prover9 -f $file > From_Axioms.out", "mace4 -f From_Axioms.in > From_Axioms.out"],
-        "forEach": {
-          "select": "line",
-          "in": "test/autonomous/Axioms.out",
-          "matching": "^given.*?:\\s*\\d+([^.\\#]*)[\\#[^.]*]?\\.\\s*\\[.*?\\]\\.",
-          "do": {
-           "write": "test/autonomous/From_Axioms.in",
-           "replace": "$placeholder"
-          }
+  "jobName": "Job1",
+  "jobDescription": "",
+  "workingDir": "/tmp",
+  "timeout": 100,
+  "verbose": true,
+  "tasks": [
+    {
+      "taskName": "T1",
+      "taskDescription": "Consequences",
+      "wait": false,
+      "timeout": 10,
+      "preparation": {},
+      "commands": [
+        "prover9 -f Axioms.in > Axioms.out"
+      ],
+      "guidance": [
+        {
+          "taskName": "T1.1",
+          "taskDescription": "For each consequence found, replace in original theory and Run prover/mace",
+          "wait": false,
+          "timeout": 10,
+          "preparation": {
+            "filterFile": "Axioms.out",
+            "pattern": "^given.*?:\\s*\\d+([^.\\#]*)[\\#[^.]*]?\\.\\s*\\[.*?\\]\\.",
+            "writeFile": "From_Axioms.in",
+            "placeholder": "$placeholder",
+            "copy": true
+          },
+          "commands": [
+            "prover9 -f $file > $file_prover.out",
+            "mace4 -f $file > $file_prover.out"
+          ],
+          "guidance": []
         }
-      }
-    }]
-  }]
+      ]
+    }
+  ]
 }

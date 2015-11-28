@@ -1,28 +1,30 @@
 {
-  "jobName": "Name",
-  "jobDescription": "Description",
-  "workingDir": "/tmp/autonomous/",
-  "timeout": 10,
+  "jobName": "Job1",
+  "jobDescription": "Test for searching files in directory and start processes",
+  "workingDir": "/tmp",
+  "timeout": 0,
   "verbose": false,
-  "tasks": [{
-    "taskName": "T1",
-    "taskDescription": "Run Prover9 to generate consequences and find new proofs",
-    "command": "prover9 -f Basic.in > Basic_prover.out",
-    "guidance": [{
-      "taskName": "T1.1",
-      "taskDescription": "Run Prover and Mace for each line produced on previous task and look for new theorems",
-      "execute": {
+  "tasks": [
+    {
+      "taskName": "FileSearch",
+      "taskDescription": "Searches files in /tmp folder and executes prover and mace",
+      "wait": false,
+      "prepare": {
         "forEach": {
           "select": "file",
-          "in": "/tmp/autonomous/",
+          "in": "/tmp",
           "matching": "*.in"
         },
         "do": {
-          
-          
+          "write": "",
+          "replace": ""
         },
-        "commands": ["prover9 -f $file > $file_prover.out", "mace4 -f $file > $file_mace.out"]
-      }
-    }]
-  }]
+        "commands": [
+          "prover9 -f $file > $file.out",
+          "mace4 -f $file > $file.out"
+        ]
+      },
+      "guidance": []
+    }
+  ]
 }
