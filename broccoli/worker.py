@@ -16,7 +16,7 @@ class Worker(multiprocessing.Process):
             except Exception:
                 break
 
-            for command in task.get_commands():
+            for command in task.get_commands:
                 ret = self.__start_sub_process(command)
                 self.result_queue.put(ret)
 

@@ -9,12 +9,15 @@
     "none": {
       "title": "File",
       "description": "Search in",
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {}
     },
     "filterFile": {
       "title": "File",
       "description": "Search in",
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "searchDirectory": {
           "title": "Directory",
@@ -38,6 +41,7 @@
       "title": "Line",
       "description": "Search in",
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "filterFile": {
           "title": "File to read",
@@ -115,7 +119,6 @@
         "preparation": {
           "title": "What do you want to do?",
           "description": "What to do to before run this task. It can be a simple command, read a file line by line or search for files to process",
-          "additionalProperties": false,
           "type": "object",
           "oneOf": [
             {
@@ -200,11 +203,6 @@
       "exclusiveMaximum": false,
       "exclusiveMinimum": false
     },
-    "verbose": {
-      "title": "Verbose",
-      "description": "Set it to true if you want to log full information on the processing",
-      "type": "boolean"
-    },
     "tasks": {
       "title": "Tasks",
       "description": "The Jobs to execute within this Job",
@@ -224,7 +222,6 @@
     "jobName",
     "workingDir",
     "timeout",
-    "verbose",
     "tasks"
   ]
 }

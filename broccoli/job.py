@@ -11,7 +11,7 @@
     :license: Apache 2.0, see LICENSE for more details
 """
 
-import uuid
+import util
 import logging
 import multiprocessing
 from task import Task
@@ -21,13 +21,11 @@ class Job:
     """
        Job constructor
 
-       :param name
-       :param wd
-       :param timeout
+       :param job_config
     """
 
     def __init__(self, job_config):
-        self.id = uuid.uuid4()
+        self.id = util.unique_id()
         self.name = job_config.get('jobName')
         self.description = job_config.get('jobDescription')
         self.wd = job_config.get('workingDir')
@@ -36,7 +34,6 @@ class Job:
         for task_config in job_config.get('tasks'):
             self.tasks.append(Task(task_config))
         logging.info('New Job created: %s', str(self.name))
-
 
     """
         Pop Tasks

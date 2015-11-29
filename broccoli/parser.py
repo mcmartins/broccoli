@@ -3,7 +3,6 @@ import os.path
 import logging
 import jsonschema
 import pkg_resources
-from job import Job
 
 
 """
@@ -72,16 +71,3 @@ def __validate(input_data):
         jsonschema.validate(input_data, json.loads(schema))
     except jsonschema.exceptions.ValidationError, e:
         raise MalformedJSONInput(e.message)
-
-
-if __name__ == '__main__':
-    import sys
-    config = parse(sys.argv[1])
-    job = Job(config)
-    tasks = job.pop_tasks()
-    task = tasks.pop(0)
-    commands = task.get_commands()
-    guidance_tasks = task.pop_guidance()
-    guidance_task = guidance_tasks.pop(0)
-    guidance_commands = guidance_task.get_commands()
-    raise InvalidInput('Input provided is not an existing file or valid JSON string!')

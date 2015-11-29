@@ -21,10 +21,12 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Main entry point for Broccoli Module. Usage: python -m broccoli -i <input.json>'
     )
-    parser.add_argument('-i', '--input', help='input json file or string', action='store',
+    parser.add_argument('-v', '--verbose', help='increase output verbosity', action='store_true',
+                        required=False)
+    parser.add_argument('-i', '--input', help='input json file / string', action='store',
                         dest='input', required=True)
     args = parser.parse_args()
     config = broccoli.parser.parse(args.input)
-    broccoli.logger.initialize(config)
+    broccoli.logger.initialize(config, args.verbose)
     job = broccoli.job.Job(config)
     broccoli.runner.Runner(job)
