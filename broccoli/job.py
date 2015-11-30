@@ -29,11 +29,11 @@ class Job:
         self.description = job_config.get('jobDescription')
         self.wd = job_config.get('workingDir')
         self.timeout = job_config.get('timeout')
-        self.tasks = []
-        for task_config in job_config.get('tasks'):
-
-            self.tasks.append(Task(None, task_config))
+        self.__tasks = []
         logging.info('New Job created: %s', str(self.name))
+        for task_config in job_config.get('tasks'):
+            # TODO chouldn't the parent be the Job!?
+            self.__tasks.append(Task(None, task_config))
 
     """
         Get Tasks
@@ -42,6 +42,4 @@ class Job:
     """
 
     def get_tasks(self):
-        # temp = self.tasks
-        # self.tasks = []
-        return self.tasks
+        return self.__tasks

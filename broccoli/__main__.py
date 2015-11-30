@@ -28,5 +28,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
     config = parse(args.input)
     logger_init(config, args.verbose)
-    job = Job(config)
-    Runner(job)
+    Runner(Job(config))

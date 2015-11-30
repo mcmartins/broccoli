@@ -7,11 +7,10 @@
 # README
 
 This tool handles Jobs. A Job is constituted by a set of Tasks.
-Each Task can have Guidance Tasks (Sub Tasks) and so on, forming a kind of Tree.
-Top Level Tasks will run in parallel and Guidance Tasks will follow as soon parent Tasks finishes.
-The processing finishes when one top level Task finishes executing (including, if any, all its Guidance Tasks).
-Tasks can be Strict Tasks or Polymorphic Tasks. Strict Tasks will run exactly as they are defined, one process per Task.
-Polymorphic Tasks are special as they will generate new Tasks depending on the output of Parent Tasks.
+Each Task can have Children Tasks and so on, forming a kind of Tree.
+Top Level Tasks will run in parallel and Children Tasks will follow as soon parent Tasks finishes.
+The processing finishes when one top level Task finishes executing (including, if any, all its Children Tasks).
+Each Task might need preparation, so Tasks are resolved into Sub Tasks before execution. 
 
 # API
 
@@ -24,48 +23,72 @@ The input JSON includes the following information:
  2. Description to best describe the Job
  3. Working directory where the Job will run, and all the output will be stored (if not specified otherwise)
  4. Timeout in seconds to kill the Job if exceeds
- 5. Kill Running Processes On Task Finish flag
- 6. List of Tasks that constitute the Job
+ 5. List of Tasks that constitute the Job
 
 * For each Task:
  1. Name o identify the Task
- 2. Command the actual command to execute and accomplish the Task
- 3. List of Sub Tasks (Guidance) circular dependency for other Tasks
-
-* Strict Tasks
- 1. Wait if the Task should wait for the output of another (at the moment is not possible to use stdout from a Task to it Sub Tasks and thus making this obsolete)
-
-* Polymorphic Tasks
- 1.
+ 2. Description to best describe the Task
+ 3. Preparation step where the user can define what to do before running the commands in the form of Sub Tasks
+ 4. Command the actual command to execute and accomplish the Task
+ 5. List of Children Tasks circular dependency for other Tasks
 
 ## Example Input
 
-The input can be something like:
+The input follows a schema [Schema](https://github.com/mcmartins/broccoli/blob/master/broccoli/schema/broccoli_schema.json).<br/>
+An example of an input would be something like:
 
 ```json
 {
-  "jobName": "Boolean Algebra 2-Basis",
-  "jobDescription": "From: https://www.cs.unm.edu/~mccune/prover9/examples/2009-11A/semantics/index.html",
-  "workingDir": "/tmp/",
-  "timeout": 60,
-  "tasks": [
-    {
-      "taskName": "T1 - Get guiding interpretation",
-      "command": "mace4 -n6 -m -1 -f BA2-interp.in | get_interps | isofilter ignore_constants wrap > BA2-interp.out",
+  "jobName": "Job1",
+  "jobDescription": "Job1 Description",
+  "workingDir": "/tmp",
+  "timeout": 100,
+  "tasks": [{
+      "taskName": "T1",
+      "taskDescription": "T1 Description",
       "wait": false,
-      "guidance": [
-        {
-          "taskName": "T1.1 - Task with guidance (20 seconds)",
-          "command": "prover9 -f BA2.in BA2-interp.out > BA2.out",
-          "wait": false
-        }
-      ]
+      "timeout": 10,
+      "commands": [
+        "prover9 -f Axioms.in > Axioms.out"
+      ],
+      "children": [{
+        "taskName": "T1.1",
+        "taskDescription": "T1.1 Description",
+        "wait": false,
+        "timeout": 10,
+        "preparation": {
+          "filterFile": "Axioms.out",
+          "pattern": "^given.*?T.*?:\\s*\\d+([^.\\#]*.)",
+          "writeFile": "New_Axioms.in",
+          "placeholder": "$placeholder",
+          "copy": true
+        },
+        "commands": [
+          "prover9 -f $file > $file_prover.out",
+          "mace4 -f $file > $file_mace.out"
+        ]
+      }, {
+        "taskName": "T1.2",
+        "taskDescription": "T1.2 Description",
+        "wait": false,
+        "timeout": 10,
+        "preparation": {
+          "searchDirectory": "/fancy_dir",
+          "pattern": "*.in"
+        },
+        "commands": [
+          "prover9 -f $file > $file_prover.out",
+          "mace4 -f $file > $file_mace.out"
+        ]
+      }]
     },
-    {
-      "taskName": "T2 - Task without guidance (46 seconds)",
-      "command": "prover9 -f BA2.in > BA2-base.out",
-      "wait": false
-    }
+    "taskName": "T2",
+    "taskDescription": "T2 Description",
+    "wait": false,
+    "timeout": 10,
+    "commands": [
+      "prover9 -f Axioms.in > Axioms.out"
+    ]
   ]
 }
 
@@ -80,25 +103,23 @@ The tool will be invoked over the WebGAP API and will run inside docker containe
 
 Application Flow Diagram:
 
-![alt text](https://github.com/mcmartins/parallel-jobs/blob/master/docs/flow.png)
+![alt text](https://github.com/mcmartins/broccoli/blob/master/docs/flow.png)
 
 Job Diagram
 
-![alt text](https://github.com/mcmartins/parallel-jobs/blob/master/docs/job.png)
+![alt text](https://github.com/mcmartins/broccoli/blob/master/docs/job.png)
 
 # Tests
 
-There are 4 TestCases:
+There are 3 TestCases:
 
-Run on Error;
-
-Run Basic example from the course examples;
+Run basic example from the course examples;
 
 Run example with guidance:
 
-![alt text](https://github.com/mcmartins/parallel-jobs/blob/master/docs/test_job.png)
+![alt text](https://github.com/mcmartins/broccoli/blob/master/docs/test_job.png)
 
-Run polymorphic task using prover - TBI
+Run task with preparation;
 
 ## How to setup environment
 
@@ -145,7 +166,6 @@ python -m broccoli -v -i '<JSON>'
 * Make available a Test Environment Package (it can be a docker image)
 * Sanitize all input / Assess Security (Webgap will run in containers but this tool itself allows to execute commands like 'rm -rf /')
 * Support piping Tasks by stdout. At the moment only Tasks generating files for Guidance Tasks is implemented.
-* Multiprocessing  implementation using pool and maximum number of processes
 * ...
 
 # LICENSE

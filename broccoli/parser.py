@@ -1,10 +1,3 @@
-import json
-import os.path
-import logging
-import jsonschema
-import pkg_resources
-
-
 """
     broccoli.parser
     ~~~~~~~~~~~~~
@@ -17,6 +10,12 @@ import pkg_resources
     :copyright: 2015 Manuel Martins, see AUTHORS for more details
     :license: Apache 2.0, see LICENSE for more details
 """
+
+import json
+import os.path
+import logging
+import jsonschema
+import pkg_resources
 
 
 class InvalidInput(AttributeError):
@@ -57,7 +56,7 @@ def parse(arg):
             config = json.loads(json.dumps(arg))
         except AttributeError:
             raise InvalidInput('Input provided is not an existing file or valid JSON string!')
-    # validate the input, will throw an exception if fails
+    # validate the input and raise an exception if fails
     __validate(config)
     logging.info('Parsing input...')
     logging.debug('Input is: %s', str(config))

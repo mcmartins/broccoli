@@ -1,37 +1,53 @@
 {
   "jobName": "Job1",
-  "jobDescription": "teste",
+  "jobDescription": "Job1 Description",
   "workingDir": "/tmp",
   "timeout": 100,
-  "tasks": [
-    {
+  "tasks": [{
       "taskName": "T1",
-      "taskDescription": "Consequences",
+      "taskDescription": "T1 Description",
       "wait": false,
       "timeout": 10,
       "commands": [
         "prover9 -f Axioms.in > Axioms.out"
       ],
-      "guidance": [
-        {
-          "taskName": "T1.1",
-          "taskDescription": "For each consequence found, replace in original theory and Run prover/mace",
-          "wait": false,
-          "timeout": 10,
-          "preparation": {
-            "filterFile": "test/autonomous/Axioms.out",
-            "pattern": "^given.*?T.*?:\\s*\\d+([^.\\#]*.)",
-            "writeFile": "test/autonomous/From_Axioms.in",
-            "placeholder": "$placeholder",
-            "copy": true
-          },
-          "commands": [
-            "prover9 -f $file > $file_prover.out",
-            "mace4 -f $file > $file_prover.out"
-          ],
-          "guidance": []
-        }
-      ]
-    }
+      "children": [{
+        "taskName": "T1.1",
+        "taskDescription": "T1.1 Description",
+        "wait": false,
+        "timeout": 10,
+        "preparation": {
+          "filterFile": "Axioms.out",
+          "pattern": "^given.*?T.*?:\\s*\\d+([^.\\#]*.)",
+          "writeFile": "New_Axioms.in",
+          "placeholder": "$placeholder",
+          "copy": true
+        },
+        "commands": [
+          "prover9 -f $file > $file_prover.out",
+          "mace4 -f $file > $file_mace.out"
+        ]
+      }, {
+        "taskName": "T1.2",
+        "taskDescription": "T1.2 Description",
+        "wait": false,
+        "timeout": 10,
+        "preparation": {
+          "searchDirectory": "/fancy_dir",
+          "pattern": "*.in"
+        },
+        "commands": [
+          "prover9 -f $file > $file_prover.out",
+          "mace4 -f $file > $file_prover.out"
+        ]
+      }]
+    },
+    "taskName": "T2",
+    "taskDescription": "T2 Description",
+    "wait": false,
+    "timeout": 10,
+    "commands": [
+      "prover9 -f Axioms.in > Axioms.out"
+    ]
   ]
 }

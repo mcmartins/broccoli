@@ -1,34 +1,49 @@
+"""
+    broccoli.Worker
+    ~~~~~~~~~~~~~
+
+    A Worker is responsible for process sub_tasks
+
+    :copyright: 2015 Manuel Martins, see AUTHORS for more details
+    :license: Apache 2.0, see LICENSE for more details
+"""
+
 import multiprocessing
 import Queue
 import logging
 import subprocess
 import os
+import inspect
+import util
 from monitor import Monitor
 
 
 class Worker(multiprocessing.Process):
     def __init__(self, job, queue, runner):
         super(Worker, self).__init__()
-        self.job = job
-        self.work_queue = queue
-        self.runner = runner
-        self.kill_received = False
-
+        self.id = util.short_unique_id()
+        self.__job = job
+        self.__work_queue = queue
+        self.__runner = runner
+        self.__alive = True
+    
+    """
+        Overrides Process.run()
+    """
+    
     def run(self):
-        logging.info(self.name + ' Started...')
-        while True:
-            processes = self.work_queue.get()
-            if processes:
-                tasks_to_monitor = []
-                for process in processes:
-                    for command in process.get_commands():
-                        logging.debug('Worker - Running command: %s', str(command))
-                        p = subprocess.Popen(command, cwd=self.job.wd, stdin=subprocess.PIPE,
-                                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                                   shell=True, preexec_fn=os.setsid)
-                        self.runner.running_processes.append(p)
-                        tasks_to_monitor.append((process.get_task(), p))
-                        logging.debug('Worker - Task process pid is: %s', str(p.pid))
-
-                    monitor = Monitor(self.runner, self)
-                    monitor.start(tasks_to_monitor)
+        logging.info('Worker - %s with id %s started...', str(self.name), str(self.id))
+        while self.__alive:
+            sub_task = self.__work_queue.get()
+            if sub_task:
+                monitor = Monitor(self.__runner)
+                sub_task.process(monitor)
+        logging.info('Worker - %s with id %s killed...', str(self.name), str(self.id))
+      
+    """
+        Kill the worker
+    """
+    
+    def kill(self):
+        self.__alive = False
+        self.__work_queue.put(None)

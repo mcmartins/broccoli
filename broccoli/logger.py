@@ -1,6 +1,3 @@
-import logging
-import os
-
 """
     broccoli.logging
     ~~~~~~~~~~~~~
@@ -10,6 +7,9 @@ import os
     :copyright: 2015 Manuel Martins, see AUTHORS for more details
     :license: Apache 2.0, see LICENSE for more details
 """
+
+import logging
+import os
 
 
 def initialize(config, verbose):

@@ -9,7 +9,7 @@
       "taskDescription": "T1 - Get guiding interpretation",
       "command": "../LADR-2009-11A/bin/mace4 -n6 -m -1 -f BA2-interp.in | ../LADR-2009-11A/bin/get_interps | ../LADR-2009-11A/bin/isofilter ignore_constants wrap > BA2-interp.out",
       "wait": false,
-      "guidance": [
+      "tasks": [
         {
           "taskName": "T1.1 - Task with guidance (20 seconds)",
           "taskDescription": "T1.1 - Task with guidance (20 seconds)",
