@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+import logging
+
 """
     broccoli.__init___
     ~~~~~~~~~~~~~
@@ -8,6 +12,6 @@
     :license: Apache 2.0, see LICENSE for more details
 """
 
-import logging
+__version__ = '0.0.2'
 
 logging.basicConfig(format='%(asctime)s - [%(levelname)s] - %(message)s', level=logging.INFO)

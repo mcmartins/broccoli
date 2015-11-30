@@ -1,4 +1,4 @@
-import uuid
+import util
 import logging
 
 """
@@ -14,9 +14,10 @@ import logging
 
 
 class Monitor:
-    def __init__(self, runner):
-        self.id = uuid.uuid4()
+    def __init__(self, runner, worker):
+        self.id = util.short_unique_id()
         self.runner = runner
+        self.worker = worker
         # tasks management variables
         self.tasks = []
         self.waiting_tasks = []

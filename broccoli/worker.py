@@ -1,41 +1,34 @@
 import multiprocessing
-import commands
+import Queue
+import logging
+import subprocess
+import os
+from monitor import Monitor
 
 
 class Worker(multiprocessing.Process):
-    def __init__(self, work_queue, result_queue):
-        multiprocessing.Process.__init__(self)
-        self.work_queue = work_queue
-        self.result_queue = result_queue
+    def __init__(self, job, queue, runner):
+        super(Worker, self).__init__()
+        self.job = job
+        self.work_queue = queue
+        self.runner = runner
         self.kill_received = False
 
     def run(self):
-        while (not self.kill_received) and (not self.work_queue.empty()):
-            try:
-                task = self.work_queue.get_nowait()
-            except Exception:
-                break
+        logging.info(self.name + ' Started...')
+        while True:
+            processes = self.work_queue.get()
+            if processes:
+                tasks_to_monitor = []
+                for process in processes:
+                    for command in process.get_commands():
+                        logging.debug('Worker - Running command: %s', str(command))
+                        p = subprocess.Popen(command, cwd=self.job.wd, stdin=subprocess.PIPE,
+                                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                                   shell=True, preexec_fn=os.setsid)
+                        self.runner.running_processes.append(p)
+                        tasks_to_monitor.append((process.get_task(), p))
+                        logging.debug('Worker - Task process pid is: %s', str(p.pid))
 
-            for command in task.get_commands:
-                ret = self.__start_sub_process(command)
-                self.result_queue.put(ret)
-
-    def __start_sub_process(self, command):
-        try:
-            # invoke runner
-            return commands.getoutput(command)
-        except Exception:
-            return "Error executing command %s" % command
-
-def run(job, num_processes=4):
-    work_queue = multiprocessing.Queue()
-    result_queue = multiprocessing.Queue()
-    tasks = job.pop_tasks()
-    for task in tasks:
-        work_queue.put(task)
-
-    workers = []
-    for i in range(num_processes):
-        workers.append(Worker(work_queue, result_queue))
-        workers[i].start()
-
+                    monitor = Monitor(self.runner, self)
+                    monitor.start(tasks_to_monitor)

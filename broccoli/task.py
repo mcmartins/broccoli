@@ -15,13 +15,13 @@
 
 import util
 import logging
-import multiprocessing
 import re
 import codecs
 import shutil
 import glob
 import os
 import urllib
+from process import Process
 
 
 class Task:
@@ -31,32 +31,34 @@ class Task:
        :param task_config
     """
 
-    def __init__(self, task_config):
-        self.id = util.unique_id()
+    def __init__(self, parent, task_config):
+        self.__id = util.short_unique_id()
+        self.parent = parent
         self.name = task_config.get('taskName')
         self.description = task_config.get('taskDescription')
         self.wait = task_config.get('wait')
-        self.preparation = task_config.get('preparation')
-        self.commands = task_config.get('commands')
-        self.guidance = []  # multiprocessing.Queue()
+
+        self.__preparation = task_config.get('preparation')
+        self.__commands = task_config.get('commands')
+        self.__guidance = []
         guidance_config = task_config.get('guidance')
         if guidance_config:
             for config in guidance_config:
-                self.guidance.append(Task(config))
+                self.__guidance.append(Task(self, config))
+        self.prepared = False
         logging.debug('New Task created: %s', str(self.name))
 
-    def get_commands(self):
-        # return self.preparation
-        to_execute = []
-        if self.preparation:
-            pattern = r"{0}".format(urllib.unquote(self.preparation.get('pattern')))
+    def prepare(self):
+        processes = []
+        if self.__preparation and not self.prepared:
+            pattern = r"{0}".format(urllib.unquote(self.__preparation.get('pattern')))
             # ok, lets see what we can do
             # did you select search files in dir or lines in file?
-            if self.preparation.get('filterFile'):
-                filter_file = self.preparation.get('filterFile')
-                write_file = self.preparation.get('writeFile')
-                placeholder = self.preparation.get('placeholder')
-                copy = self.preparation.get('copy')
+            if self.__preparation.get('filterFile'):
+                filter_file = self.__preparation.get('filterFile')
+                write_file = self.__preparation.get('writeFile')
+                placeholder = self.__preparation.get('placeholder')
+                copy = self.__preparation.get('copy')
                 if os.path.exists(filter_file):
                     # look matching regex in each line of a file
                     with open(filter_file, "r") as f:
@@ -73,9 +75,12 @@ class Task:
                                 shutil.copy2(write_file, new_file)
 
                             # get commands to execute
-                            for command in self.commands:
+                            process = Process(self)
+                            for command in self.__commands:
                                 # replace placeholder with actual created file
-                                to_execute.append(command.replace('$file', new_file).replace('$line', new_file))
+                                process.add_command(command.replace('$file', new_file).replace('$line', line))
+
+                            processes.append(process)
 
                             # look in side the new file for the placeholder and replace it
                             with codecs.open(new_file, 'rw+', encoding='utf8') as fw:
@@ -87,25 +92,31 @@ class Task:
                 else:
                     raise Exception('File does not exist!')
 
-            elif self.preparation.get('searchDirectory'):
-                search_directory = self.preparation.get('searchDirectory')
+            elif self.__preparation.get('searchDirectory'):
+                search_directory = self.__preparation.get('searchDirectory')
                 if os.path.exists(search_directory):
                     # look for files matching the regex in a dir
                     all_matching_files = [name for name in glob.glob(os.path.join(search_directory, pattern))]
 
                     for match_file in all_matching_files:
                         # replace placeholder with matching file
+                        process = Process(self)
+                        for command in self.__commands:
+                            process.add_command(command.replace('$file', match_file))
 
-                        for command in self.commands:
-                            to_execute.append(command.replace('$file', match_file))
+                        processes.append(process)
+
                 else:
                     raise Exception('Directory does not exist!')
             else:
                 raise Exception('Oops this shouldn\'t happen!')
         else:
-            to_execute = self.commands
+            process = Process(self)
+            process.add_commands(self.__commands)
+            processes.append(process)
 
-        return to_execute
+        self.prepared = True
+        return processes
 
     """
         Pop Guidance Tasks
@@ -114,6 +125,6 @@ class Task:
     """
 
     def pop_guidance(self):
-        temp = self.guidance
-        self.guidance = []
-        return temp
+        # temp = self.guidance
+        # self.guidance = []
+        return self.__guidance

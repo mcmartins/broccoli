@@ -1,7 +1,7 @@
 {
   "jobName": "Job1",
   "jobDescription": "teste",
-  "workingDir": "/tmp",
+  "workingDir": "/media/sf_GitHub/broccoli/broccoli/test/autonomous/",
   "timeout": 100,
   "tasks": [
     {
@@ -10,7 +10,7 @@
       "wait": false,
       "timeout": 10,
       "commands": [
-        "prover9 -f Axioms.in > Axioms.out"
+        "prover9 -f /media/sf_GitHub/broccoli/broccoli/test/autonomous/Axioms.in > /media/sf_GitHub/broccoli/broccoli/test/autonomous/Axioms.out"
       ],
       "guidance": [
         {
@@ -19,17 +19,16 @@
           "wait": false,
           "timeout": 10,
           "preparation": {
-            "filterFile": "test/autonomous/Axioms.out",
+            "filterFile": "/media/sf_GitHub/broccoli/broccoli/test/autonomous/Axioms.out",
             "pattern": "^given.*?T.*?:\\s*\\d+([^.\\#]*.)",
-            "writeFile": "test/autonomous/From_Axioms.in",
+            "writeFile": "/media/sf_GitHub/broccoli/broccoli/test/autonomous/From_Axioms.in",
             "placeholder": "$placeholder",
             "copy": true
           },
           "commands": [
             "prover9 -f $file > $file_prover.out",
             "mace4 -f $file > $file_prover.out"
-          ],
-          "guidance": []
+          ]
         }
       ]
     }

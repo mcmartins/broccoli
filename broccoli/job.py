@@ -13,7 +13,6 @@
 
 import util
 import logging
-import multiprocessing
 from task import Task
 
 
@@ -25,22 +24,24 @@ class Job:
     """
 
     def __init__(self, job_config):
-        self.id = util.unique_id()
+        self.__id = util.short_unique_id()
         self.name = job_config.get('jobName')
         self.description = job_config.get('jobDescription')
         self.wd = job_config.get('workingDir')
         self.timeout = job_config.get('timeout')
-        self.tasks = [] #multiprocessing.Queue()
+        self.tasks = []
         for task_config in job_config.get('tasks'):
-            self.tasks.append(Task(task_config))
+
+            self.tasks.append(Task(None, task_config))
         logging.info('New Job created: %s', str(self.name))
 
     """
-        Pop Tasks
+        Get Tasks
 
         :return tasks
     """
-    def pop_tasks(self):
-        temp = self.tasks
-        self.tasks = []
-        return temp
+
+    def get_tasks(self):
+        # temp = self.tasks
+        # self.tasks = []
+        return self.tasks

@@ -12,10 +12,10 @@
 """
 
 import argparse
-import broccoli.logger
-import broccoli.runner
-import broccoli.parser
-import broccoli.job
+from logger import initialize as logger_init
+from parser import parse
+from runner import Runner
+from job import Job
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -26,7 +26,7 @@ if __name__ == '__main__':
     parser.add_argument('-i', '--input', help='input json file / string', action='store',
                         dest='input', required=True)
     args = parser.parse_args()
-    config = broccoli.parser.parse(args.input)
-    broccoli.logger.initialize(config, args.verbose)
-    job = broccoli.job.Job(config)
-    broccoli.runner.Runner(job)
+    config = parse(args.input)
+    logger_init(config, args.verbose)
+    job = Job(config)
+    Runner(job)
