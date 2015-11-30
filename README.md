@@ -39,65 +39,58 @@ An example of an input would be something like:
 
 ```json
 {
-    "jobName": "Job1",
-    "jobDescription": "Job1 Description",
-    "workingDir": "/tmp",
-    "timeout": 100,
-    "tasks": [
-        {
-            "taskName": "T1",
-            "taskDescription": "T1 Description",
-            "wait": false,
-            "timeout": 10,
-            "commands": [
-                "prover9 -f Axioms.in > Axioms.out"
-            ],
-            "children": [
-                {
-                    "taskName": "T1.1",
-                    "taskDescription": "T1.1 Description",
-                    "wait": false,
-                    "timeout": 10,
-                    "preparation": {
-                        "filterFile": "Axioms.out",
-                        "pattern": "^given.*?T.*?:\\s*\\d+([^.\\#]*.)",
-                        "writeFile": "New_Axioms.in",
-                        "placeholder": "$placeholder",
-                        "copy": true
-                    },
-                    "commands": [
-                        "prover9 -f $file > $file_prover.out",
-                        "mace4 -f $file > $file_mace.out"
-                    ]
-                },
-                {
-                    "taskName": "T1.2",
-                    "taskDescription": "T1.2 Description",
-                    "wait": false,
-                    "timeout": 10,
-                    "preparation": {
-                        "searchDirectory": "/fancy_dir",
-                        "pattern": "*.in"
-                    },
-                    "commands": [
-                        "prover9 -f $file > $file_prover.out",
-                        "mace4 -f $file > $file_mace.out"
-                    ]
-                }
-            ]
-        },
-        {
-            "taskName": "T2",
-            "taskDescription": "T2 Description",
-            "wait": false,
-            "timeout": 10,
-            "commands": [
-                "prover9 -f Axioms.in > Axioms.out"
-            ]
-        }
+  "jobName": "Job1",
+  "jobDescription": "Job1 Description",
+  "workingDir": "/tmp",
+  "timeout": 100,
+  "tasks": [{
+    "taskName": "T1",
+    "taskDescription": "T1 Description",
+    "wait": false,
+    "timeout": 10,
+    "commands": [
+      "prover9 -f Axioms.in > Axioms.out"
+    ],
+    "children": [{
+      "taskName": "T1.1",
+      "taskDescription": "T1.1 Description",
+      "wait": false,
+      "timeout": 10,
+      "preparation": {
+        "filterFile": "Axioms.out",
+        "pattern": "^given.*?T.*?:\\s*\\d+([^.\\#]*.)",
+        "writeFile": "New_Axioms.in",
+        "placeholder": "$placeholder",
+        "copy": true
+      },
+      "commands": [
+        "prover9 -f $file > $file_prover.out",
+        "mace4 -f $file > $file_mace.out"
+      ]
+    }, {
+      "taskName": "T1.2",
+      "taskDescription": "T1.2 Description",
+      "wait": false,
+      "timeout": 10,
+      "preparation": {
+        "searchDirectory": "/fancy_dir",
+        "pattern": "*.in"
+      },
+      "commands": [
+        "prover9 -f $file > $file_prover.out",
+        "mace4 -f $file > $file_mace.out"
+      ]
+    }]
+  }, {
+    "taskName": "T2",
+    "taskDescription": "T2 Description",
+    "wait": false,
+    "timeout": 10,
+    "commands": [
+      "prover9 -f Axioms.in > Axioms.out"
     ]
+  }]
 }
-
 ```
 
 ## Integration with WebGAP
