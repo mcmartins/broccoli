@@ -34,7 +34,7 @@ The input JSON includes the following information:
 
 ## Example Input
 
-The input follows a schema [Schema](https://github.com/mcmartins/broccoli/blob/master/broccoli/schema/broccoli_schema.json).<br/>
+The input follows the following JSON [Schema](https://github.com/mcmartins/broccoli/blob/master/broccoli/schema/broccoli_schema.json).<br/>
 An example of an input would be something like:
 
 ```json
