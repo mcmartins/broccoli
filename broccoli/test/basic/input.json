@@ -1,17 +1,26 @@
 {
   "jobName": "Job1",
   "jobDescription": "teste",
-  "workingDir": "/media/sf_GitHub/broccoli/broccoli/test/basic/",
+  "workingDir": "/tmp/",
   "timeout": 100,
-  "tasks": [
-    {
-      "taskName": "T1",
-      "taskDescription": "teste",
+  "tasks": [{
+    "taskName": "T1",
+    "taskDescription": "teste1",
+    "wait": false,
+    "timeout": 10,
+    "commands": [
+      "echo '1 - Were fine!'; sleep 2;",
+      "echo '1 - Were fine too!'; sleep 10;"
+    ],
+    "children": [{
+      "taskName": "T1.1",
+      "taskDescription": "teste1.1",
       "wait": false,
       "timeout": 10,
       "commands": [
-        "prover9 -f /media/sf_GitHub/broccoli/broccoli/test/basic/Basic.in > /media/sf_GitHub/broccoli/broccoli/test/basic/basic.out"
+        "echo '1.1 - Were fine!'; sleep 10;",
+        "echo '1.1 - Were fine too!'; sleep 2;"
       ]
-    }
-  ]
+    }]
+  }]
 }
