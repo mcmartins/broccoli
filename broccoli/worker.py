@@ -9,11 +9,7 @@
 """
 
 import multiprocessing
-import Queue
 import logging
-import subprocess
-import os
-import inspect
 import util
 from monitor import Monitor
 
@@ -35,15 +31,16 @@ class Worker(multiprocessing.Process):
         logging.info('Worker - %s with id %s started...', str(self.name), str(self.id))
         while self.__alive:
             sub_task = self.__work_queue.get()
-            if sub_task:
-                monitor = Monitor(self.__runner)
-                sub_task.process(monitor)
+            if sub_task is None:
+                break
+            monitor = Monitor(self.__runner)
+            sub_task.process(monitor)
         logging.info('Worker - %s with id %s killed...', str(self.name), str(self.id))
-      
+
+
     """
         Kill the worker
     """
-    
+
     def kill(self):
-        self.__alive = False
         self.__work_queue.put(None)

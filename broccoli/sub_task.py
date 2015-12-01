@@ -22,8 +22,7 @@ class SubTask:
         self.id = util.short_unique_id()
         self.__parent_task = parent_task
         self.__commands = []
-        logging.info('Process - New Process created %s for Task %s', str(self.id), str(self.__parent_task.name))
-        return
+        logging.info('SubTask - New SubTask created %s for Task %s', str(self.id), str(self.__parent_task.name))
 
     def add_command(self, command):
         self.__build_commands([command])
@@ -38,7 +37,7 @@ class SubTask:
     def process(self, monitor):
         tasks_to_monitor = []
         for command in self.__commands:
-            logging.debug('Process - New command running %s', str(command))
+            logging.debug('SubTask - New command running %s', str(command))
             process = subprocess.Popen(command, cwd=self.__parent_task.wd, stdin=subprocess.PIPE,
                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                 shell=True, preexec_fn=os.setsid)
