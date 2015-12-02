@@ -2,25 +2,36 @@
   "jobName": "Job1",
   "jobDescription": "teste",
   "workingDir": "/tmp/",
-  "timeout": 100,
-  "tasks": [{
-    "taskName": "T1",
-    "taskDescription": "teste1",
-    "wait": false,
-    "timeout": 10,
-    "commands": [
-      "echo '1 - Were fine!'; sleep 2;",
-      "echo '1 - Were fine too!'; sleep 10;"
-    ],
-    "children": [{
-      "taskName": "T1.1",
-      "taskDescription": "teste1.1",
+  "timeout": 15,
+  "tasks": [
+    {
+      "taskName": "T1",
+      "taskDescription": "teste1",
       "wait": false,
       "timeout": 10,
       "commands": [
-        "echo '1.1 - Were fine!'; sleep 10;",
-        "echo '1.1 - Were fine too!'; sleep 2;"
+        "echo '1 - Were fine too!'; sleep 10;"
+      ],
+      "children": [
+        {
+          "taskName": "T1.1",
+          "taskDescription": "teste1.1",
+          "wait": false,
+          "timeout": 10,
+          "commands": [
+            "echo '1.1 - Were fine!'; sleep 4;",
+            "echo '1.1 - Were fine too!'; sleep 5;"
+          ]
+        }
       ]
-    }]
+    },{
+    "taskName": "T2",
+    "taskDescription": "teste2",
+    "wait": false,
+    "timeout": 10,
+    "commands": [
+      "echo '2 - Were fine!'; sleep 3;",
+      "echo '2 - Were fine too!'; sleep 2;"
+    ]
   }]
 }

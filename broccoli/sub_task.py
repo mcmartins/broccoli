@@ -34,16 +34,9 @@ class SubTask:
         for command in commands:
             self.__commands.append(' '.join(shlex.split(command)))
 
-    def process(self, monitor):
-        tasks_to_monitor = []
-        for command in self.__commands:
-            process = subprocess.Popen(command, cwd=self.__parent_task.wd, stdin=subprocess.PIPE,
-                                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                shell=True, preexec_fn=os.setsid)
-            logging.debug('SubTask - New command running %s with pid %s.', str(command), str(process.pid))
-            tasks_to_monitor.append((self, process))
-        monitor.start(tasks_to_monitor)
-        
+    def get_commands(self):
+        return self.__commands
+
     def get_parent(self):
         return self.__parent_task
 

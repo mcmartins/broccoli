@@ -14,42 +14,45 @@ import logging
 
 
 class Monitor:
-    def __init__(self, runner):
+    def __init__(self, manager):
         self.id = util.short_unique_id()
-        self.runner = runner
+        self.manager = manager
         self.sub_tasks = []
         self.waiting_tasks = []
         self.failed_tasks = []
         self.succeed_tasks = []
+        self.exit = False
 
     def start(self, tasks):
         self.sub_tasks.extend(tasks)
-        [self.runner.add_process(process.pid) for (sub_task, process) in tasks]
-        logging.info('Monitor - Starting monitor ID %s', str(self.id))
+        [self.manager.add_process(process.pid) for (sub_task, process) in tasks]
+        logging.info('Monitor - Starting monitor ID: %s', str(self.id))
         logging.debug(
             'Monitor - Monitoring the following task(s): %s',
-            ', '.join([' > '.join([sub_task.get_parent().name, sub_task.id]) for (sub_task, process) in tasks]))
+            ', '.join([sub_task.get_parent().name for (sub_task, process) in tasks]))
         # start monitor loop
         self.__monitor()
 
     def __monitor(self):
         while True:
+            if self.exit:
+                break
             if self.sub_tasks:
                 for (sub_task, process) in self.sub_tasks:
                     return_code = process.poll()
                     if return_code is not None:
                         # process finished
                         self.sub_tasks.remove((sub_task, process))
-                        self.runner.remove_process(process.pid)
+                        self.manager.remove_process(process.pid)
                         (std_out, std_err) = process.communicate()
                         if return_code == 0:
                             # sub_task finished successfully
-                            logging.info('Monitor - FINISHED - SubTask %s - %s', str(sub_task.get_parent().name),
+                            logging.info('Monitor - FINISHED - Task %s, SubTask %s.', str(sub_task.get_parent().name),
                                          str(sub_task.id))
                             Monitor.__print_output(std_err, std_out)
                             if sub_task.get_parent().wait:
                                 # should we wait for others to finish?
-                                logging.info('Monitor - Waiting for others Tasks to finish.')
+                                logging.info('Monitor - Waiting for other Tasks to finish.')
                                 self.waiting_tasks.append((sub_task, process))
                                 continue
                             else:
@@ -57,10 +60,11 @@ class Monitor:
                                 self.succeed_tasks.append((sub_task, process))
                                 if sub_task.get_parent().has_children():
                                     logging.info('Monitor - No need to wait for other processes to finish.')
-                                    for (sub_task, process) in self.sub_tasks:
-                                        self.runner.kill_process(process.pid)
-                                    logging.info('Monitor - Task has Children. Sending Sub Tasks to Runner.')
-                                    self.runner.add_tasks(sub_task.get_parent().get_children())
+                                    for (s, p) in self.sub_tasks:
+                                        self.manager.kill_process(p.pid)
+                                    logging.info('Monitor - Task has Children. Sending Tasks to Runner.')
+                                    self.manager.add_tasks(sub_task.get_parent().get_children())
+                                    self.exit = True
                                     break
                                 else:
                                     self.__print_task_tree(sub_task.get_parent())
@@ -81,7 +85,7 @@ class Monitor:
                             else:
                                 # hum we cannot proceed to the children tasks because this one failed
                                 # lets see if the Job has still tasks running
-                                if self.runner.has_running_processes():
+                                if self.manager.has_running_processes():
                                     # OK fine, there are still other tasks at the same level running
                                     continue
                                 else:
@@ -94,11 +98,11 @@ class Monitor:
                 if self.waiting_tasks:
                     for (sub_task, process) in self.waiting_tasks:
                         if sub_task.get_parent().has_children():
-                            self.runner.add_tasks(sub_task.get_parent().get_children())
+                            self.manager.add_tasks(sub_task.get_parent().get_children())
                 # this branch is over no need to monitor anymore
                 # a new monitor is created for each branch of tasks
                 break
-        logging.info('Monitor - Finishing Monitor ID %s', str(self.id))
+        logging.info('Monitor - Finishing Monitor ID: %s', str(self.id))
 
     @staticmethod
     def __print_output(std_err, std_out):
@@ -118,4 +122,4 @@ class Monitor:
             tasks.append(task.name)
         logging.info('Monitor - The Job finished with the following order:')
         for i, task in enumerate(reversed(tasks)):
-            logging.info('%s: %s', ordinal(i + 1), task)
+            logging.info('\t%s: %s', ordinal(i + 1), task)
