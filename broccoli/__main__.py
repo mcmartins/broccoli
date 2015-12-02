@@ -18,14 +18,14 @@ from runner import Runner
 from job import Job
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(
+    args_parser = argparse.ArgumentParser(
         description='Main entry point for Broccoli Module. Usage: python -m broccoli -i <input.json>'
     )
-    parser.add_argument('-v', '--verbose', help='increase output verbosity', action='store_true',
+    args_parser.add_argument('-v', '--verbose', help='increase output verbosity', action='store_true',
                         required=False)
-    parser.add_argument('-i', '--input', help='input json file / string', action='store',
+    args_parser.add_argument('-i', '--input', help='input json file / string', action='store',
                         dest='input', required=True)
-    args = parser.parse_args()
+    args = args_parser.parse_args()
     config = parse(args.input)
     logger_init(config, args.verbose)
     Runner(Job(config))

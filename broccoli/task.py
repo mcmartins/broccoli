@@ -24,6 +24,21 @@ import urllib
 from sub_task import SubTask
 
 
+class InvalidFileDirectory(Exception):
+    """
+    Raised when the the user tries to use a file or directory that we cannot find
+
+    Attributes:
+        message  --
+    """
+
+    def __init__(self, message):
+        self.message = 'Cannot find the file/directory specified. ' + message
+
+    def __str__(self):
+        return repr(self.message)
+
+
 class Task:
     """
        Task constructor
@@ -58,54 +73,52 @@ class Task:
                 write_file = self.__preparation.get('writeFile')
                 placeholder = self.__preparation.get('placeholder')
                 copy = self.__preparation.get('copy')
-                if os.path.exists(filter_file):
-                    # look matching regex in each line of a file
-                    with open(filter_file, "r") as f:
-                        all_matching_lines = re.findall(pattern, f.read(), re.MULTILINE)
-                        f.close()
+                if not os.path.exists(filter_file):
+                    raise InvalidFileDirectory('File '+ filter_file +'does not exist!')
+                if not os.path.exists(write_file):
+                    raise InvalidFileDirectory('File '+ write_file +'does not exist!')
+                # look matching regex in each line of a file
+                with open(filter_file, "r") as f:
+                    all_matching_lines = re.findall(pattern, f.read(), re.MULTILINE)
+                    f.close()
 
-                        # create a copy of the file with the same name plus
-                        for line in filter(None, all_matching_lines):
-                            new_file = write_file
-                            if copy:
-                                new_file = \
-                                    '{0}-{1}-{2}'.format(self.name, util.short_unique_id(),
-                                                         os.path.basename(write_file))
-                                shutil.copy2(write_file, new_file)
+                    # create a copy of the file with the same name plus
+                    for line in filter(None, all_matching_lines):
+                        new_file = write_file
+                        if copy:
+                            new_file = \
+                                '{0}-{1}-{2}'.format(self.name, util.short_unique_id(),
+                                                     os.path.basename(write_file))
+                            shutil.copy2(write_file, new_file)
 
-                            # get commands to execute
-                            sub_task = SubTask(self)
-                            for command in self.__commands:
-                                # replace placeholder with actual created file
-                                sub_task.add_command(command.replace('$file', new_file).replace('$line', line))
-                            sub_tasks.append(sub_task)
-
-                            # look in side the new file for the placeholder and replace it
-                            with codecs.open(new_file, 'rw+', encoding='utf8') as fw:
-                                text = fw.read()
-                                fw.seek(0)
-                                fw.write(text.replace(placeholder, str(line)))
-                                fw.close()
-
-                else:
-                    raise Exception('File does not exist!')
+                        # get commands to execute
+                        sub_task = SubTask(self)
+                        for command in self.__commands:
+                            # replace placeholder with actual created file
+                            sub_task.add_command(command.replace('$file', new_file).replace('$line', line))
+                        sub_tasks.append(sub_task)
+                        
+                        # look in side the new file for the placeholder and replace it
+                        with codecs.open(new_file, 'rw+', encoding='utf8') as fw:
+                            text = fw.read()
+                            fw.seek(0)
+                            fw.write(text.replace(placeholder, str(line)))
+                            fw.close()
 
             elif self.__preparation.get('searchDirectory'):
                 search_directory = self.__preparation.get('searchDirectory')
-                if os.path.exists(search_directory):
-                    # look for files matching the regex in a dir
-                    all_matching_files = [name for name in glob.glob(os.path.join(search_directory, pattern))]
+                if not os.path.exists(search_directory):
+                    raise InvalidFileDirectory('Directory '+ search_directory +'does not exist!')
+                # look for files matching the regex in a dir
+                all_matching_files = [name for name in glob.glob(os.path.join(search_directory, pattern))]
 
-                    for match_file in all_matching_files:
-                        # replace placeholder with matching file
-                        sub_task = SubTask(self)
-                        for command in self.__commands:
-                            sub_task.add_command(command.replace('$file', match_file))
-                        sub_tasks.append(sub_task)
+                for match_file in all_matching_files:
+                    # replace placeholder with matching file
+                    sub_task = SubTask(self)
+                    for command in self.__commands:
+                        sub_task.add_command(command.replace('$file', match_file))
+                    sub_tasks.append(sub_task)
 
-                else:
-                    raise Exception('Directory does not exist!')
-                    
             else:
                 raise Exception('Oops this shouldn\'t happen!')
                 

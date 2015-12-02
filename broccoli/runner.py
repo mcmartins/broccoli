@@ -15,17 +15,7 @@ import multiprocessing
 from monitor import Monitor
 from manager import Manager
 import atexit
-
-
-def process(monitor, sub_task):
-    tasks_to_monitor = []
-    for command in sub_task.get_commands():
-        p = subprocess.Popen(command, cwd=sub_task.get_parent().wd, stdin=subprocess.PIPE,
-                             stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                             shell=True, preexec_fn=os.setsid)
-        logging.debug('SubTask - New command running %s with pid %s.', str(command), str(p.pid))
-        tasks_to_monitor.append((sub_task, p))
-    return monitor.start(tasks_to_monitor)
+import worker
 
 
 class Runner:
@@ -51,8 +41,8 @@ class Runner:
                 sub_tasks = task.get_subtasks()
                 for sub_task in sub_tasks:
                     monitor = Monitor(self.manager)
-                    self.pool.apply_async(process, args=(monitor, sub_task,))
-                logging.warn("--- %s seconds ---" % (time.time() - start_time))
+                    self.pool.apply_async(worker.do, args=(sub_task, monitor,))
+                logging.debug("--- %s seconds ---" % (time.time() - start_time))
             except IndexError:
                 pass
 

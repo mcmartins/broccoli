@@ -36,6 +36,8 @@ class Monitor:
     def __monitor(self):
         while True:
             if self.exit:
+                logging.info('Monitor - exit %s', str(self.exit))
+                logging.info('Monitor - i dont get in here')
                 break
             if self.sub_tasks:
                 for (sub_task, process) in self.sub_tasks:
@@ -65,6 +67,7 @@ class Monitor:
                                     logging.info('Monitor - Task has Children. Sending Tasks to Runner.')
                                     self.manager.add_tasks(sub_task.get_parent().get_children())
                                     self.exit = True
+                                    logging.info('Monitor - exit %s', str(self.exit))
                                     break
                                 else:
                                     self.__print_task_tree(sub_task.get_parent())

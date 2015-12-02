@@ -2,45 +2,26 @@
     broccoli.Worker
     ~~~~~~~~~~~~~
 
-    A Worker is responsible for process sub_tasks
+    A Worker is responsible for process Sub Tasks
 
     :copyright: 2015 Manuel Martins, see AUTHORS for more details
     :license: Apache 2.0, see LICENSE for more details
 """
 
-import multiprocessing
 import logging
+import subprocess
 import util
-from monitor import Monitor
+import os
 
 
-class Worker(multiprocessing.Process):
-    def __init__(self, job, queue, runner):
-        super(Worker, self).__init__()
-        self.id = util.short_unique_id()
-        self.__job = job
-        self.__work_queue = queue
-        self.__runner = runner
-        self.__alive = True
-    
-    """
-        Overrides Process.run()
-    """
-    
-    def run(self):
-        logging.info('Worker - %s with id %s started...', str(self.name), str(self.id))
-        while self.__alive:
-            sub_task = self.__work_queue.get()
-            if sub_task is None:
-                break
-            monitor = Monitor(self.__runner)
-            sub_task.process(monitor)
-        logging.info('Worker - %s with id %s killed...', str(self.name), str(self.id))
-
-
-    """
-        Kill the worker
-    """
-
-    def kill(self):
-        self.__work_queue.put(None)
+def do(sub_task, monitor):
+    logging.info('Worker - Started SubTask: %s.', str(sub_task.id))
+    tasks_to_monitor = []
+    for command in sub_task.get_commands():
+        p = subprocess.Popen(command, cwd=sub_task.get_parent().wd, stdin=subprocess.PIPE,
+                             stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                             shell=True, preexec_fn=os.setsid)
+        logging.debug('Worker - Process with pid %s is running command %s.',  str(p.pid), str(command))
+        tasks_to_monitor.append((sub_task, p))
+    monitor.start(tasks_to_monitor)
+    logging.info('Worker - We\'re done with SubTask %s. Launched %i command(s).', str(sub_task.id), len(sub_task.get_commands()))

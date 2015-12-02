@@ -58,5 +58,5 @@ class Manager:
         # ensure we kill all processes still running
         for process in self.__running_processes:
             self.kill_process(process)
-        exit(0)
         logging.info('Manager - Bye Bye.')
+        exit(0)

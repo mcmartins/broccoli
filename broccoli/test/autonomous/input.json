@@ -10,18 +10,18 @@
       "wait": false,
       "timeout": 10,
       "commands": [
-        "prover9 -f /media/sf_GitHub/broccoli/broccoli/test/autonomous/Axioms.in > /media/sf_GitHub/broccoli/broccoli/test/autonomous/Axioms.out"
+        "prover9 -f /media/sf_GitHub/broccoli/broccoli/test/autonomous/Theory.in > /media/sf_GitHub/broccoli/broccoli/test/autonomous/Consequences.out"
       ],
-      "guidance": [
+      "children": [
         {
           "taskName": "T1.1",
           "taskDescription": "For each consequence found, replace in original theory and Run prover/mace",
           "wait": false,
           "timeout": 10,
           "preparation": {
-            "filterFile": "/media/sf_GitHub/broccoli/broccoli/test/autonomous/Axioms.out",
+            "filterFile": "/media/sf_GitHub/broccoli/broccoli/test/autonomous/Consequences.out",
             "pattern": "^given.*?T.*?:\\s*\\d+([^.\\#]*.)",
-            "writeFile": "/media/sf_GitHub/broccoli/broccoli/test/autonomous/From_Axioms.in",
+            "writeFile": "/media/sf_GitHub/broccoli/broccoli/test/autonomous/New-Theory-*.in",
             "placeholder": "$placeholder",
             "copy": true
           },

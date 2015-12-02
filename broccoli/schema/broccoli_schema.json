@@ -13,31 +13,7 @@
       "additionalProperties": false,
       "properties": {}
     },
-    "filterFile": {
-      "title": "File",
-      "description": "Search in",
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "searchDirectory": {
-          "title": "Directory",
-          "description": "Please enter the path where you want to search for files",
-          "type": "string",
-          "minLength": 1
-        },
-        "pattern": {
-          "title": "Pattern",
-          "description": "Please enter the pattern of the files you want to match",
-          "type": "string",
-          "minLength": 1
-        }
-      },
-      "required": [
-        "searchDirectory",
-        "pattern"
-      ]
-    },
-    "filterLine": {
+    "filter": {
       "title": "Line",
       "description": "Search in",
       "type": "object",
@@ -45,25 +21,25 @@
       "properties": {
         "filterFile": {
           "title": "File to read",
-          "description": "Please specify the file you want to filer",
+          "description": "Please specify the file you want to filter or a regex",
           "type": "string",
           "minLength": 1
         },
         "pattern": {
           "title": "Matching Regex",
-          "description": "This regex should match exactly what you want to extract from a file",
+          "description": "This regex should match exactly what you want to extract from the file(s)",
           "type": "string",
           "minLength": 1
         },
         "writeFile": {
           "title": "File to write",
-          "description": "Please specify the file you want to write the matching results",
+          "description": "Please specify the file you want to write the matching results or a regex",
           "type": "string",
           "minLength": 1
         },
         "placeholder": {
           "title": "Placeholder",
-          "description": "The placeholder you want to be replaced with the matched results",
+          "description": "The placeholder in the file(s) you want to be replaced with the matched results",
           "type": "string",
           "minLength": 1
         },
@@ -72,14 +48,7 @@
           "description": "One copy of the file per regex match?",
           "type": "boolean"
         }
-      },
-      "required": [
-        "filterFile",
-        "pattern",
-        "writeFile",
-        "placeholder",
-        "copy"
-      ]
+      }
     },
     "task": {
       "title": "Describes a Task",
@@ -130,13 +99,9 @@
             "description": "",
             "$ref": "#/definitions/none"
           }, {
-            "title": "Search for files",
-            "description": "Please use '$file' placeholder in the commands section if you want to use the matched files",
-            "$ref": "#/definitions/filterFile"
-          }, {
-            "title": "Match lines in a file",
-            "description": "Please use '$file' placeholder in the commands section if you want to use the new files created",
-            "$ref": "#/definitions/filterLine"
+            "title": "Filter",
+            "description": "Please use '$file' placeholder in the commands section if you want to use the matched files or $line if you want the matched content",
+            "$ref": "#/definitions/filter"
           }]
         },
         "commands": {

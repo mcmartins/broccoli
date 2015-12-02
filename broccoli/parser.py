@@ -3,7 +3,7 @@
     ~~~~~~~~~~~~~
 
     This is a JSON parser.
-    It reads a file or string and converts into a Job object.
+    It reads a file or string and returns the dictionary of attributes.
 
     See 'broccoli_schema.json' for details on usage.
 
@@ -27,7 +27,7 @@ class InvalidInput(AttributeError):
     """
 
     def __init__(self, message):
-        self.message = 'Invalid input provided. ' + message
+        self.message = 'Invalid input provided. Should be in JSON format and should be a File or String. ' + message
 
     def __str__(self):
         return repr(self.message)
@@ -42,7 +42,7 @@ class MalformedJSONInput(jsonschema.exceptions.ValidationError):
     """
 
     def __init__(self, message):
-        self.message = 'Invalid input provided. ' + message
+        self.message = 'The JSON input is invalid. ' + message
 
     def __str__(self):
         return repr(self.message)
