@@ -15,15 +15,12 @@ import multiprocessing
 
 
 class Monitor(multiprocessing.Process):
-    def __init__(self, manager, tasks, ):
+    def __init__(self, tasks, ):
         multiprocessing.Process.__init__(self)
         self.id = util.short_unique_id()
-        self.manager = manager
         self.sub_tasks = []
         self.sub_tasks.extend(tasks)
         self.sub_tasks.extend(tasks)
-        for (sub_task, process) in tasks:
-            self.manager.add_process(process.pid)
         logging.info('Monitor - Starting monitor ID: %s', str(self.id))
         logging.debug(
             'Monitor - Monitoring the following task(s): %s',
@@ -35,10 +32,9 @@ class Monitor(multiprocessing.Process):
 
     def exit(self):
         self.exit_event.set()
-        self.manager.cleanup()
         self.join()
 
-    def run(self):
+    def monitor(self, queue):
         while not self.exit_event.is_set():
             if self.sub_tasks:
                 for (sub_task, process) in self.sub_tasks:
@@ -46,7 +42,7 @@ class Monitor(multiprocessing.Process):
                     if return_code is not None:
                         # process finished
                         self.sub_tasks.remove((sub_task, process))
-                        self.manager.remove_process(process.pid)
+                        #self.manager.remove_process(process.pid)
                         (std_out, std_err) = process.communicate()
                         if return_code == 0:
                             # sub_task finished successfully
@@ -62,10 +58,10 @@ class Monitor(multiprocessing.Process):
                                 # good to go
                                 if sub_task.get_parent().has_children():
                                     logging.info('Monitor - No need to wait for other processes to finish.')
-                                    for (s, p) in self.sub_tasks:
-                                        self.manager.kill_process(p.pid)
+                                    #for (s, p) in self.sub_tasks:
+                                    #    self.manager.kill_process(p.pid)
                                     logging.info('Monitor - Task has Children. Sending Tasks to self.manager.')
-                                    self.manager.add_tasks(sub_task.get_parent().get_children())
+                                    queue.put(sub_task.get_parent().get_children())
                                     self.exit()
                                     self.terminate()
                                     break
@@ -91,7 +87,7 @@ class Monitor(multiprocessing.Process):
                             else:
                                 # hum we cannot proceed to the children tasks because this one failed
                                 # lets see if the Job has still tasks running
-                                if self.manager.has_running_processes():
+                                if False: #self.manager.has_running_processes():
                                     # OK fine, there are still other tasks at the same level running
                                     continue
                                 else:
@@ -107,10 +103,10 @@ class Monitor(multiprocessing.Process):
                     for (sub_task, process) in self.waiting_tasks:
                         if sub_task.get_parent().has_children():
                             logging.info('Monitor - No need to wait for other processes to finish.')
-                            for (s, p) in self.sub_tasks:
-                                self.manager.kill_process(p.pid)
+                            #for (s, p) in self.sub_tasks:
+                            #    self.manager.kill_process(p.pid)
                             logging.info('Monitor - Task has Children. Sending Tasks to self.manager.')
-                            self.manager.add_tasks(sub_task.get_parent().get_children())
+                            queue.put(sub_task.get_parent().get_children())
                             self.exit()
                             self.terminate()
                             break

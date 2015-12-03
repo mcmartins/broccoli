@@ -31,10 +31,12 @@ class Runner:
         self.job = job
         self.manager = Manager(self.job)
         atexit.register(self.cleanup)
-        self.pool = multiprocessing.Pool(multiprocessing.cpu_count()-1)
+        self.pool = multiprocessing.Pool(multiprocessing.cpu_count())
+        self.tasks_queue = multiprocessing.Queue()
         logging.info('Runner - Running Tasks for Job: %s.', str(job.name))
         logging.debug('Runner - Working Directory is: %s.', str(job.wd))
         logging.debug('Runner - Will Timeout after: %s seconds.', str(job.timeout))
+        self.tasks_queue.put(job.get_tasks())
         self.__run()
 
     def __run(self):
@@ -42,12 +44,14 @@ class Runner:
         start_time = time.time()
         while True:
             try:
-                task = self.manager.get_task()
-                logging.info('Runner - Starting processing Task: %s.', str(task.name))
-                sub_tasks = task.get_sub_tasks()
-                for sub_task in sub_tasks:
-                    worker.do(sub_task, self.manager)
-                    #self.pool.apply_async(worker.do, args=(sub_task, self.manager,))
+                tasks = self.tasks_queue.get()
+                for task in tasks:
+                    worker.do(task, self.tasks_queue)
+                # logging.info('Runner - Starting processing Task: %s.', str(task.name))
+                # sub_tasks = task.get_sub_tasks()
+                # for sub_task in sub_tasks:
+                #    worker.do(sub_task, self.manager)
+                #    self.pool.apply_async(worker.do, args=(sub_task, self.manager,))
                 logging.debug("--- %s seconds ---" % (time.time() - start_time))
             except IndexError:
                 pass
