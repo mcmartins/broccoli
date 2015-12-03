@@ -1,17 +1,15 @@
 assign(max_seconds, 5).
 
 formulas(sos).
-(x * y) * z = x * (y * z).
-x * e = e * x.
-x * e = x.
-x * x' = e.
-x' * x = e.
+x * (y * z) = (x * y) * z.
+x'' = x.
+x = x * (x' * x).
 $placeholder
 
 end_of_list.
 
 formulas(goals).
 
-x * y = y * x.
+(x * x') * (y' * y) = (y' * y) * (x * x').
 
 end_of_list.

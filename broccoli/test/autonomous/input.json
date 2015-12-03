@@ -27,7 +27,7 @@
           },
           "commands": [
             "prover9 -f $file > $file_prover.out",
-            "mace4 -f $file > $file_prover.out"
+            "mace4 -f $file > $file_mace.out"
           ]
         }
       ]
