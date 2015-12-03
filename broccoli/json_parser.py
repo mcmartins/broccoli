@@ -58,8 +58,8 @@ def parse(arg):
             raise InvalidInput('Input provided is not an existing file or valid JSON string!')
     # validate the input and raise an exception if fails
     __validate(config)
-    logging.info('Parsing input...')
-    logging.debug('Input is: %s', str(config))
+    logging.info('JSON Parser - Parsing input...')
+    logging.debug('JSON Parser - Input is: %s', str(config))
     return config
 
 
