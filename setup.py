@@ -9,8 +9,9 @@ setup(name='broccoli',
       license='Apache 2.0',
       packages=['broccoli', 'broccoli.schema', 'broccoli.test'],
       package_data={'broccoli': ['schema/*.json']},
-      requires=['jsonschema'],
+      requires=['jsonschema', 'dispy'],
       install_requires=[
-          'jsonschema'
+          'jsonschema',
+          'dispy'
       ],
       zip_safe=False)

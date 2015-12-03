@@ -21,7 +21,6 @@ class Monitor(multiprocessing.Process):
         self.manager = manager
         self.sub_tasks = []
         self.sub_tasks.extend(tasks)
-        self.sub_tasks.extend(tasks)
         for (sub_task, process) in tasks:
             self.manager.add_process(process.pid)
         logging.info('Monitor - Starting monitor ID: %s', str(self.id))
