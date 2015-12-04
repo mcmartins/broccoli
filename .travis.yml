@@ -25,6 +25,7 @@ install:
 
 script:
   - python -m broccoli -v -i /tmp/basic/input.json
+  - python -m broccoli -v -i /tmp/guidance/input.json
 
 after_script:
   - ls -la /tmp

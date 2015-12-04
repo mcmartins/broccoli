@@ -1,5 +1,5 @@
 {
-"jobName": "Job1",
+  "jobName": "Job1",
   "jobDescription": "Job1 Test using echo and sleep",
   "workingDir": "/tmp/basic",
   "timeout": 15,
