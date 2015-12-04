@@ -19,5 +19,3 @@ def short_unique_id():
 
 def unique_id():
     return str(uuid.uuid4()).replace('-', '')
-
-

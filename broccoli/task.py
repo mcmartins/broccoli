@@ -115,7 +115,7 @@ class Task:
 
             else:
                 raise Exception('Oops this shouldn\'t happen!')
-                
+
         else:
             sub_task = SubTask(self)
             sub_task.add_commands(self.__commands)
@@ -131,17 +131,17 @@ class Task:
 
     def get_children(self):
         return self.__children
-        
+
     """
         Returns True if there are Guidance Tasks
     """
-        
+
     def has_children(self):
         return len(self.__children) > 0
-        
+
     """
         Returns the parent task if this task is a child, otherwise None
     """
-    
+
     def get_parent(self):
         return self.__parent

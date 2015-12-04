@@ -1,6 +1,6 @@
 language: python
 python:
-    - 2.7
+    - 2.7.6
 
 env:
     - DEPS=true
@@ -24,8 +24,7 @@ install:
   - sudo python setup.py clean build install
 
 script:
-  - python -m broccoli -v -i broccoli/test/basic/input.json
-  - python -m broccoli -v -i broccoli/test/guidance/input.json
+  - python -m broccoli -v -i /tmp/basic/input.json
 
 after_script:
   - ls -la /tmp

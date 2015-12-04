@@ -1,12 +1,12 @@
 {
   "jobName": "Job1",
-  "jobDescription": "teste",
+  "jobDescription": "Job1 Test using echo and sleep",
   "workingDir": "/tmp/",
   "timeout": 15,
   "tasks": [
     {
       "taskName": "T1",
-      "taskDescription": "teste1",
+      "taskDescription": "T1 Description",
       "wait": false,
       "timeout": 10,
       "commands": [
@@ -15,7 +15,7 @@
       "children": [
         {
           "taskName": "T1.1",
-          "taskDescription": "teste1.1",
+          "taskDescription": "T1.1 Description",
           "wait": false,
           "timeout": 10,
           "commands": [
@@ -24,14 +24,16 @@
           ]
         }
       ]
-    },{
-    "taskName": "T2",
-    "taskDescription": "teste2",
-    "wait": false,
-    "timeout": 10,
-    "commands": [
-      "echo '2 - Were fine!'; sleep 3;",
-      "echo '2 - Were fine too!'; sleep 2;"
-    ]
-  }]
+    },
+    {
+      "taskName": "T2",
+      "taskDescription": "T2 Description. This should finish first and terminate the process.",
+      "wait": false,
+      "timeout": 10,
+      "commands": [
+        "echo '2 - Were fine!'; sleep 3;",
+        "echo '2 - Were fine too!'; sleep 2;"
+      ]
+    }
+  ]
 }

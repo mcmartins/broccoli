@@ -13,8 +13,6 @@
 import logging
 import util
 import shlex
-import os
-import subprocess
 
 
 class SubTask:
