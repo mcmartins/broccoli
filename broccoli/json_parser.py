@@ -53,7 +53,7 @@ def parse(arg):
         config = json.loads(open(arg).read().decode("utf-8"))
     else:
         try:
-            config = json.loads(json.dumps(arg))
+            config = json.JSONEncoder().encode(json.loads(json.dumps(arg)))
         except AttributeError:
             raise InvalidInput('Input provided is not an existing file or valid JSON string!')
     # validate the input and raise an exception if fails

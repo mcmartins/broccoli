@@ -2,10 +2,10 @@
     broccoli.Task
     ~~~~~~~~~~~~~
 
-    A Task is a process that runs in the background.
-    A Task can have Sub Tasks (Guidance).
-    All Sub Tasks (Guidance's) have a parent assigned.
-    A Task is considered finished when all Sub Tasks (Guidance's) are finished.
+    A Task is a specific work to be done.
+    A Task can have Children. Children has a parent assigned.
+    A Task is considered finished when all children is finished.
+    Tasks commands are breakdown in Sub Tasks.
 
     See 'broccoli_schema.json' for details on usage.
 
@@ -56,14 +56,17 @@ class Task:
         self.__preparation = task_config.get('preparation')
         self.__commands = task_config.get('commands')
         self.__children = []
-        logging.debug('New Task created: %s', str(self.name))
+        logging.debug('Task - Created [%s] with ID [%s]', str(self.name), str(self.__id))
         children_config = task_config.get('children')
         if children_config:
             for config in children_config:
                 self.__children.append(Task(self, config))
+        self.sub_tasks = []
 
-    def get_sub_tasks(self):
-        sub_tasks = []
+    def get_sub_tasks(self):\
+        # ensure we just process this method once
+        if self.sub_tasks:
+            return self.sub_tasks
         if self.__preparation:
             pattern = r"{0}".format(urllib.unquote(self.__preparation.get('pattern')))
             # ok, lets see what we can do
@@ -76,9 +79,9 @@ class Task:
                 filter_files_found = [name for name in glob.glob(filter_file)]
                 write_files_found = [name for name in glob.glob(write_file)]
                 if len(filter_files_found) < 1:
-                    raise InvalidFileDirectory('Files were not found matching %s.'.format(filter_file))
+                    raise InvalidFileDirectory('Task - Files were not found matching {0}.'.format(filter_file))
                 if len(write_files_found) < 1:
-                    raise InvalidFileDirectory('Files were not found matching %s.'.format(write_file))
+                    raise InvalidFileDirectory('Task - Files were not found matching {0}.'.format(write_file))
                 # look matching regex in each line of a file
                 all_matching_lines = []
                 for f_file in filter_files_found:
@@ -102,7 +105,7 @@ class Task:
                         for command in self.__commands:
                             # replace placeholder with actual created file
                             sub_task.add_command(command.replace('$file', new_file).replace('$line', line))
-                        sub_tasks.append(sub_task)
+                        self.sub_tasks.append(sub_task)
 
                         # look in side the new file for the placeholder and replace it
                         with codecs.open(new_file, 'r', encoding='utf8') as fw:
@@ -114,14 +117,14 @@ class Task:
                             fw.close()
 
             else:
-                raise Exception('Oops this shouldn\'t happen!')
+                raise Exception('Task - Oops this shouldn\'t happen!')
 
         else:
             sub_task = SubTask(self)
             sub_task.add_commands(self.__commands)
-            sub_tasks.append(sub_task)
+            self.sub_tasks.append(sub_task)
 
-        return sub_tasks
+        return self.sub_tasks
 
     """
         Get Guidance Tasks

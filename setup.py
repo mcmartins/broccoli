@@ -1,12 +1,16 @@
 from setuptools import setup
-from sys import version
-if version < '2.7.10':
-    print 'Please update your python version to 2.7.10'
-    exit(1)
+import sys
 
+# check for if the python version can run broccoli
+current_version = sys.version_info
+
+if current_version < (2, 7, 6) and current_version > (2, 7, 10):
+    sys.exit('Sorry. Please update your python version to match range >=2.7.6, <=2.7.10.')
+
+# setup
 setup(name='broccoli',
-      version='0.0.1',
-      description='Broccoli is a parallel tasks executor.',
+      version='0.0.2',
+      description='Broccoli is a parallel Jobs executor.',
       url='http://github.com/mcmartins/broccoli',
       author='Manuel Martins',
       author_email='manuelmachadomartins@gmail.com',

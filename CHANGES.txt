@@ -1,1 +1,2 @@
 v0.0.1, 01-11-2015 -- Initial release.
+v0.0.2, 04-12-2015 -- New API with multiprocessing alpha release.

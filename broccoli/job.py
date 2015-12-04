@@ -5,21 +5,22 @@
     A Job is a set of tasks working to solve a specific problem.
     The tasks can work together or concurrently.
 
-    See 'broccoli_schema.json' for details on usage.
+    See 'broccoli_schema.json' for details on Job Structure.
 
     :copyright: 2015 Manuel Martins, see AUTHORS for more details
     :license: Apache 2.0, see LICENSE for more details
 """
-from collections import namedtuple
+
 import util
 import time
 import logging
+import multiprocessing
+import Queue
+import atexit
+import os
+import signal
 from task import Task
 import worker
-import multiprocessing
-import atexit
-import signal
-import Queue
 
 
 class Job:
@@ -36,7 +37,7 @@ class Job:
         self.wd = job_config.get('workingDir')
         self.timeout = job_config.get('timeout')
         self.__tasks = []
-        logging.info('New Job created: %s', str(self.name))
+        logging.debug('Job - Created [%s] with ID [%s].', str(self.name), str(self.__id))
         for task_config in job_config.get('tasks'):
             # TODO couldn't the parent be the Job!?
             self.__tasks.append(Task(None, task_config))
@@ -45,11 +46,12 @@ class Job:
         signal.alarm(self.timeout)
         # ensure nothing stays running if the tool blows for some reason
         atexit.register(self.__cleanup)
-        self.mmanager = multiprocessing.Manager()
-        self.tasks_queue = self.mmanager.Queue()
-        self.running_processes = self.mmanager.list()
+        logging.debug('Job - Initializing a Processing Pool with [%s] cores.', str(multiprocessing.cpu_count()))
+        self.multiprocessing_manager = multiprocessing.Manager()
+        self.tasks_queue = self.multiprocessing_manager.Queue()
+        self.running_processes = self.multiprocessing_manager.list()
         self.pool = multiprocessing.Pool()
-        self.kill_event = self.mmanager.Event()
+        self.kill_event = self.multiprocessing_manager.Event()
         self.thread_utils = (self.tasks_queue, self.running_processes, self.kill_event)
 
     """
@@ -66,7 +68,7 @@ class Job:
     """
 
     def start(self):
-        logging.info('Job - Starting processing Job: %s.', str(self.name))
+        logging.info('Job - Starting Job [%s].', str(self.name))
         logging.info('Job - Sending Tasks to Processing Queue.')
         for task in self.__tasks:
             self.thread_utils[0].put(task)
@@ -74,10 +76,9 @@ class Job:
         while not self.thread_utils[2].is_set():
             try:
                 task = self.thread_utils[0].get_nowait()
-                logging.info('Job - Starting processing Task: %s.', str(task.name))
+                logging.info('Job - Starting processing Task [%s].', str(task.name))
                 sub_tasks = task.get_sub_tasks()
                 for sub_task in sub_tasks:
-                    #worker.do(self.thread_utils, sub_task)
                     self.pool.apply_async(worker.do, args=(self.thread_utils, sub_task,))
             except Queue.Empty:
                 # seems nothing is the queue for now
@@ -89,12 +90,9 @@ class Job:
         exit(5)
 
     def __cleanup(self):
-        import os
-        import signal
+        logging.info('Job - Cleaning up all processes.')
         for process in self.thread_utils[1]:
-            try:
-                os.kill(process, signal.SIGTERM)
-                logging.info('Job - Process with pid %s Killed.', str(process))
-            except OSError:
-                logging.info('Job - Process with pid %s is not present. Skipping...', str(process))
+            util.kill_process(process)
+        logging.debug('Job - Closing Processing Pool.')
+        self.pool.close()
         logging.info('Job - Bye Bye.')

@@ -12,18 +12,21 @@ import logging
 import subprocess
 import os
 import manager
+import util
 
 
 def do(thread_util, sub_task,):
-    logging.info('Worker - Started SubTask: %s.', str(sub_task.id))
+    unique_id = util.short_unique_id()
+    logging.debug('Worker - Starting ID [%s].', str(unique_id))
+    logging.info('Worker - Starting to work on SubTask [%s].', str(sub_task.id))
     tasks_to_monitor = []
     for command in sub_task.get_commands():
         p = subprocess.Popen(command, cwd=sub_task.get_parent().wd, stdin=subprocess.PIPE,
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                              shell=True, preexec_fn=os.setsid)
-        logging.debug('Worker - Process with pid %s is running command %s.', str(p.pid), str(command))
+        logging.debug('Worker - Created process with pid [%s], running [%s].', str(p.pid), str(command))
         thread_util[1].append(p.pid)
         tasks_to_monitor.append((sub_task, p))
-    manager.monitor(thread_util, tasks_to_monitor)
-    logging.info('Worker - We\'re done with SubTask %s. Launched %i command(s).', str(sub_task.id),
-                 len(tasks_to_monitor))
+    logging.info('Worker - Launched %i process command(s). I\'m done with SubTask [%s].', len(tasks_to_monitor), str(sub_task.id))
+    logging.debug('Worker - Finished ID [%s].', str(unique_id))
+    return manager.monitor(thread_util, tasks_to_monitor)

@@ -1,38 +1,38 @@
 {
-  "jobName": "Job1",
+"jobName": "Job1",
   "jobDescription": "Job1 Test using echo and sleep",
-  "workingDir": "/tmp/",
+  "workingDir": "/tmp/basic",
   "timeout": 15,
   "tasks": [
     {
       "taskName": "T1",
-      "taskDescription": "T1 Description",
+      "taskDescription": "Simulates a process that takes 5 seconds to finish.",
       "wait": false,
       "timeout": 10,
       "commands": [
-        "echo '1 - Were fine too!'; sleep 10;"
+        "echo '1 - Im fine! You?'; sleep 10;"
       ],
       "children": [
         {
           "taskName": "T1.1",
-          "taskDescription": "T1.1 Description",
+          "taskDescription": "Simulates 2 processes running in parallel that take 2 seconds and 3 seconds, respectivelly, to finish. This Task runs after T1.",
           "wait": false,
           "timeout": 10,
           "commands": [
-            "echo '1.1 - Were fine!'; sleep 4;",
-            "echo '1.1 - Were fine too!'; sleep 5;"
+            "echo '1.1 - Im fine!'; sleep 2;",
+            "echo '1.1 - Im fine too!'; sleep 3;"
           ]
         }
       ]
     },
     {
       "taskName": "T2",
-      "taskDescription": "T2 Description. This should finish first and terminate the process.",
-      "wait": false,
+      "taskDescription": "Simulates 2 processes that take 5 seconds and 6 seconds, respectivelly, to finish. This Task should finish first and terminate the process.",
+      "wait": true,
       "timeout": 10,
       "commands": [
-        "echo '2 - Were fine!'; sleep 3;",
-        "echo '2 - Were fine too!'; sleep 2;"
+        "echo '2 - Im fine!'; sleep 5;",
+        "echo '2 - Im fine too!'; sleep 6;"
       ]
     }
   ]
