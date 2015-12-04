@@ -1,15 +1,16 @@
 import unittest
 import broccoli.logger
-import broccoli.json_parser
-import broccoli.job
+import broccoli.parser
+from broccoli.job import Job
 
 
 class BroccoliTest(unittest.TestCase):
     def test(self):
-        json = broccoli.json_parser.parse('input.json')
+        json = broccoli.parser.parse('input.json')
         broccoli.logger.initialize(json, True)
+        job = Job(json)
         self.assertIsInstance(job, broccoli.job.Job)
-        broccoli.runner.Runner(job)
-
+        job.start()
+        
 if __name__ == '__main__':
     unittest.main()

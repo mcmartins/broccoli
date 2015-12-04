@@ -17,3 +17,6 @@ class BroccoliTest(unittest.TestCase):
         self.assertEqual(task.description, 'Task1 Description')
         self.assertIsNotNone(task.get_sub_tasks())
         self.assertIsNotNone(task.get_children())
+        
+if __name__ == '__main__':
+    unittest.main()
