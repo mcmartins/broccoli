@@ -21,7 +21,7 @@ before_install:
   - cd -
 
 install:
-  - sudo python setup.py clean build install
+  - python setup.py clean build install
 
 script:
   - python -m broccoli -v -i /tmp/basic/input.json
