@@ -39,8 +39,9 @@ class Job:
         self.__tasks = []
         logging.debug('Job - Created [%s] with ID [%s].', str(self.name), str(self.__id))
         for task_config in job_config.get('tasks'):
-            # TODO couldn't the parent be the Job!?
             self.__tasks.append(Task(None, task_config))
+        # change working directory
+        os.chdir(self.wd)
         # ensure timeout
         signal.signal(signal.SIGALRM, self.__timeout)
         signal.alarm(self.timeout)
