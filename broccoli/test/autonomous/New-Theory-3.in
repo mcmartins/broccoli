@@ -1,11 +1,11 @@
 assign(max_seconds, 1).
 
 formulas(sos).
-x * (y * z) = (x * y) * z.
-x'' = x.
 $placeholder
+x'' = x.
+x = x * (x' * x).
 end_of_list.
 
 formulas(goals).
-x = x * (x' * x).
+x * (y * z) = (x * y) * z.
 end_of_list.

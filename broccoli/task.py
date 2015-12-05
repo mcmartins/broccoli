@@ -47,16 +47,17 @@ class Task:
     """
 
     def __init__(self, parent, task_config):
-        self.__id = util.short_unique_id()
+        self.id = util.short_unique_id()
         self.__parent = parent
         self.name = task_config.get('taskName')
         self.description = task_config.get('taskDescription')
         self.wd = task_config.get('workingDir')
         self.wait = task_config.get('wait')
+        self.fail_tolerant = task_config.get('failTolerant')
         self.__preparation = task_config.get('preparation')
         self.__commands = task_config.get('commands')
         self.__children = []
-        logging.debug('Task - Created [%s] with ID [%s].', str(self.name), str(self.__id))
+        logging.debug('Task - Created [%s] with ID [%s].', str(self.name), str(self.id))
         children_config = task_config.get('children')
         if children_config:
             for config in children_config:
@@ -148,3 +149,9 @@ class Task:
 
     def get_parent(self):
         return self.__parent
+
+    def __cmp__(self, other):
+        return cmp(self.id, other.id)
+
+    def __hash__(self):
+        return hash(self.id) ^ hash(self.name)

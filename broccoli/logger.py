@@ -8,6 +8,7 @@
     :license: Apache 2.0, see LICENSE for more details
 """
 
+import datetime
 import logging
 import os
 
@@ -18,7 +19,8 @@ def initialize(config, verbose):
         logging.info('The working directory %s specified, does not exist. Creating working directory...',
                      str(config.get('workingDir')))
         os.makedirs(config.get('workingDir'))
-    handler = logging.FileHandler(config.get('workingDir') + '/Broccoli-Job-' + config.get('jobName') + '.log')
+    handler = logging.FileHandler(
+        '{0}/Broccoli-{1}.log'.format(config.get('workingDir'), datetime.datetime.now().strftime("%Y%m%d%H%M")))
     formatter = logging.Formatter('%(asctime)s - [%(levelname)s] - %(message)s')
     handler.setFormatter(formatter)
     logging.getLogger().addHandler(handler)

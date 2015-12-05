@@ -1,33 +1,43 @@
 {
   "jobName": "Job1",
   "jobDescription": "teste",
-  "workingDir": "/media/sf_GitHub/broccoli/broccoli/test/autonomous/",
-  "timeout": 100,
+  "workingDir": "/tmp/autonomous",
+  "timeout": 10000,
   "tasks": [
     {
       "taskName": "T1",
       "taskDescription": "Consequences",
       "wait": false,
-      "timeout": 10,
+      "failTolerant": true,
       "commands": [
-        "prover9 -f /media/sf_GitHub/broccoli/broccoli/test/autonomous/Theory.in > /media/sf_GitHub/broccoli/broccoli/test/autonomous/Consequences.out"
+        "../LADR-2009-11A/bin/prover9 -f Theory.in > Consequences.out"
       ],
       "children": [
         {
           "taskName": "T1.1",
           "taskDescription": "For each consequence found, replace in original theory and Run prover/mace",
           "wait": false,
-          "timeout": 10,
+          "failTolerant": true,
           "preparation": {
-            "filterFile": "/media/sf_GitHub/broccoli/broccoli/test/autonomous/Consequences.out",
+            "filterFile": "Consequences.out",
             "pattern": "^given.*?T.*?:\\s*\\d+([^.\\#]*.)",
-            "writeFile": "/media/sf_GitHub/broccoli/broccoli/test/autonomous/New-Theory-*.in",
+            "writeFile": "New-Theory-*.in",
             "placeholder": "$placeholder",
             "copy": true
           },
           "commands": [
-            "prover9 -f $file > $file_prover.out",
-            "mace4 -f $file > $file_mace.out"
+            "../LADR-2009-11A/bin/prover9 -f $file > $file_prover.out",
+            "../LADR-2009-11A/bin/mace4 -f $file > $file_mace.out"
+          ],
+          "children": [
+            {
+              "taskName": "T1.1.1",
+              "taskDescription": "For each output check for proofs prover/mace",
+              "wait": false,
+              "commands": [
+                "grep \"THEOREM PROVED\" -R --exclude=\\*{json,log} ."
+              ]
+            }
           ]
         }
       ]

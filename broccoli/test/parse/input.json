@@ -2,52 +2,54 @@
   "jobName": "Job1",
   "jobDescription": "Job1 Description",
   "workingDir": "/tmp",
-  "timeout": 100,
-  "tasks": [{
+  "timeout": 10,
+  "tasks": [
+    {
       "taskName": "T1",
       "taskDescription": "T1 Description",
       "wait": false,
-      "timeout": 10,
       "commands": [
         "prover9 -f Axioms.in > Axioms.out"
       ],
-      "children": [{
-        "taskName": "T1.1",
-        "taskDescription": "T1.1 Description",
-        "wait": false,
-        "timeout": 10,
-        "preparation": {
-          "filterFile": "Axioms.out",
-          "pattern": "^given.*?T.*?:\\s*\\d+([^.\\#]*.)",
-          "writeFile": "New_Axioms.in",
-          "placeholder": "$placeholder",
-          "copy": true
+      "children": [
+        {
+          "taskName": "T1.1",
+          "taskDescription": "T1.1 Description",
+          "wait": false,
+          "preparation": {
+            "filterFile": "Axioms.out",
+            "pattern": "^given.*?T.*?:\\s*\\d+([^.\\#]*.)",
+            "writeFile": "New_Axioms.in",
+            "placeholder": "$placeholder",
+            "copy": true
+          },
+          "commands": [
+            "prover9 -f $file > $file_prover.out",
+            "mace4 -f $file > $file_mace.out"
+          ]
         },
-        "commands": [
-          "prover9 -f $file > $file_prover.out",
-          "mace4 -f $file > $file_mace.out"
-        ]
-      }, {
-        "taskName": "T1.2",
-        "taskDescription": "T1.2 Description",
-        "wait": false,
-        "timeout": 10,
-        "preparation": {
-          "searchDirectory": "/fancy_dir",
-          "pattern": "*.in"
-        },
-        "commands": [
-          "prover9 -f $file > $file_prover.out",
-          "mace4 -f $file > $file_prover.out"
-        ]
-      }]
+        {
+          "taskName": "T1.2",
+          "taskDescription": "T1.2 Description",
+          "wait": false,
+          "preparation": {
+            "searchDirectory": "/fancy_dir",
+            "pattern": "*.in"
+          },
+          "commands": [
+            "prover9 -f $file > $file_prover.out",
+            "mace4 -f $file > $file_prover.out"
+          ]
+        }
+      ]
     },
-    "taskName": "T2",
-    "taskDescription": "T2 Description",
-    "wait": false,
-    "timeout": 10,
-    "commands": [
-      "prover9 -f Axioms.in > Axioms.out"
-    ]
+    {
+      "taskName": "T2",
+      "taskDescription": "T2 Description",
+      "wait": false,
+      "commands": [
+        "prover9 -f Axioms.in > Axioms.out"
+      ]
+    }
   ]
 }

@@ -16,6 +16,7 @@ before_install:
   - cp broccoli/test/Makefile /tmp/LADR-2009-11A/provers.src
   - cp -r broccoli/test/basic /tmp/
   - cp -r broccoli/test/guidance /tmp/
+  - cp -r broccoli/test/autonomous /tmp/
   - cd /tmp/LADR-2009-11A/
   - make all
   - cd -
@@ -26,9 +27,11 @@ install:
 script:
   - python -m broccoli -v -i /tmp/basic/input.json
   - python -m broccoli -v -i /tmp/guidance/input.json
+  - python -m broccoli -v -i /tmp/autonomous/input.json
 
 after_script:
   - ls -la /tmp
   - ls -la /tmp/basic
   - ls -la /tmp/guidance
+  - ls -la /tmp/autonomous
 

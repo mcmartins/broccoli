@@ -1,13 +1,10 @@
-assign(max_seconds, 1).
+set(auto).
+set(print_kept).
+assign(max_given, 10).
 
 formulas(sos).
 x * (y * z) = (x * y) * z.
 x'' = x.
 x = x * (x' * x).
-(x * x') * (y' * y) = (y' * y) * (x * x').
-end_of_list.
-
-formulas(goals).
-
 end_of_list.
 
