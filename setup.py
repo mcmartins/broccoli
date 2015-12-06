@@ -4,7 +4,7 @@ import sys
 # check for if the python version can run broccoli
 current_version = sys.version_info
 
-if current_version < (2, 7, 6) and current_version > (2, 7, 10):
+if current_version < (2, 7, 5) and current_version > (2, 7, 10):
     sys.exit('Sorry. Please update your python version to match range >=2.7.6, <=2.7.10.')
 
 # setup
