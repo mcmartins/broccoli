@@ -64,7 +64,7 @@ class Task:
                 self.__children.append(Task(self, config))
         self.sub_tasks = []
 
-    def get_sub_tasks(self):\
+    def get_sub_tasks(self):
         # ensure we just process this method once
         if self.sub_tasks:
             return self.sub_tasks
@@ -151,7 +151,7 @@ class Task:
         return self.__parent
 
     def __cmp__(self, other):
-        return cmp(self.id, other.id)
+        return cmp(self.name, other.name)
 
     def __hash__(self):
-        return hash(self.id) ^ hash(self.name)
+        return hash(self.name) ^ hash(self.name)

@@ -20,7 +20,7 @@ def initialize(config, verbose):
                      str(config.get('workingDir')))
         os.makedirs(config.get('workingDir'))
     handler = logging.FileHandler(
-        '{0}/Broccoli-{1}.log'.format(config.get('workingDir'), datetime.datetime.now().strftime("%Y%m%d%H%M")))
+        '{0}/Broccoli-{1}.log'.format(config.get('workingDir'), datetime.datetime.now().strftime("%Y%m%d")))
     formatter = logging.Formatter('%(asctime)s - [%(levelname)s] - %(message)s')
     handler.setFormatter(formatter)
     logging.getLogger().addHandler(handler)

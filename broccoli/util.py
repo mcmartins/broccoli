@@ -21,7 +21,7 @@ from time import time
 
 
 def short_unique_id():
-    return hex(int(time() * 999999))[2:]
+    return str(hex(int(time() * 999999))[2:])
 
 
 """

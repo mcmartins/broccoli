@@ -35,7 +35,7 @@
               "taskDescription": "For each output check for proofs prover/mace",
               "wait": false,
               "commands": [
-                "grep \"THEOREM PROVED\" -R --exclude=\\*{json,log} ."
+                "grep \'THEOREM PROVED\' -R --exclude=\\*{.json,.log} ."
               ]
             }
           ]
