@@ -1,12 +1,12 @@
 {
-  "jobName": "Job1",
-  "jobDescription": "teste",
+  "jobName": "Consequences",
+  "jobDescription": "Search for new Theories.",
   "workingDir": "/tmp/autonomous",
   "timeout": 10000,
   "tasks": [
     {
       "taskName": "T1",
-      "taskDescription": "Consequences",
+      "taskDescription": "Generate Consequences from a predefined Theory.",
       "wait": false,
       "failTolerant": true,
       "commands": [
@@ -15,7 +15,7 @@
       "children": [
         {
           "taskName": "T1.1",
-          "taskDescription": "For each consequence found, replace in original theory and Run prover/mace",
+          "taskDescription": "For each consequence found, replace in original Theory and Run prover/mace to find new Theories.",
           "wait": false,
           "failTolerant": true,
           "preparation": {
@@ -32,10 +32,10 @@
           "children": [
             {
               "taskName": "T1.1.1",
-              "taskDescription": "For each output check for proofs prover/mace",
+              "taskDescription": "For each Prover9/Mace4 output check for proofs found.",
               "wait": false,
               "commands": [
-                "grep \'THEOREM PROVED\' -R --exclude=\\*{.json,.log} ."
+                "grep THEOREM?PROVED -R --exclude=*{.json,.log} ."
               ]
             }
           ]
