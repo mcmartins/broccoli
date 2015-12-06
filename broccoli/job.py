@@ -82,8 +82,8 @@ class Job:
                 logging.info('Job - Starting processing Task [%s].', str(task.name))
                 sub_tasks = task.get_sub_tasks()
                 for sub_task in sub_tasks:
-                    worker.do(self.thread_utils, sub_task,)
-                    #self.pool.apply_async(worker.do, args=(self.thread_utils, sub_task,))
+                    #worker.do(self.thread_utils, sub_task,)
+                    self.pool.apply_async(worker.do, args=(self.thread_utils, sub_task,))
             except Queue.Empty:
                 # seems nothing is the queue for now
                 time.sleep(1)
