@@ -73,6 +73,9 @@ class ThreadingPropertiesProxy(BaseProxy):
     def has_running_processes(self, task_id):
         return self._callmethod('has_running_processes', [task_id])
 
+    def __kill_all_processes(self):
+        return self._callmethod('__kill_all_processes')
+
 
 class ThreadingProperties(dict):
     def __init__(self, **kwargs):
@@ -97,7 +100,7 @@ class ThreadingProperties(dict):
         self.__kill_all_processes()
 
     def is_kill_event_set(self):
-        self.kill_event.is_set()
+        return self.kill_event.is_set()
 
     def get_result_code(self):
         return self.result_code
