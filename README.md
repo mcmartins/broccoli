@@ -2,7 +2,6 @@
 
 [![Build Status](https://travis-ci.org/mcmartins/broccoli.svg)](https://travis-ci.org/mcmartins/broccoli)
 [![Code Climate](https://codeclimate.com/github/mcmartins/broccoli/badges/gpa.svg)](https://codeclimate.com/github/mcmartins/broccoli)
-[![Test Coverage](https://codeclimate.com/github/mcmartins/broccoli/badges/coverage.svg)](https://codeclimate.com/github/mcmartins/broccoli/coverage)
 [![Issue Count](https://codeclimate.com/github/mcmartins/broccoli/badges/issue_count.svg)](https://codeclimate.com/github/mcmartins/broccoli)
 
 <img src="https://github.com/mcmartins/parallel-jobs/blob/master/docs/broccoli.png" alt="logo" width="200px" height="200px">
