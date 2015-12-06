@@ -40,6 +40,7 @@ class Job:
         self.timeout = job_config.get('timeout')
         self.__tasks = []
         logging.debug('Job - Created [%s] with ID [%s].', str(self.name), str(self.__id))
+        logging.debug('Job - Description [%s].', str(self.description))
         for task_config in job_config.get('tasks'):
             self.__tasks.append(Task(None, task_config))
         # change working directory

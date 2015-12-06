@@ -58,6 +58,7 @@ class Task:
         self.__commands = task_config.get('commands')
         self.__children = []
         logging.debug('Task - Created [%s] with ID [%s].', str(self.name), str(self.id))
+        logging.debug('Task - Description [%s].', str(self.description))
         children_config = task_config.get('children')
         if children_config:
             for config in children_config:
