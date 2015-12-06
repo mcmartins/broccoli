@@ -35,7 +35,7 @@
               "taskDescription": "For each Prover9/Mace4 output check for proofs found.",
               "wait": false,
               "commands": [
-                "grep THEOREM?PROVED -R --exclude=*{.json,.log} ."
+                "grep -rl PROVED --exclude='*.json' --exclude='*.log' . && echo 'New Theories Found.' || echo 'No new Theories Found.'"
               ]
             }
           ]
