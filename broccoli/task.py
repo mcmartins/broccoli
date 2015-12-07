@@ -72,7 +72,6 @@ class Task:
         if self.__preparation:
             pattern = r"{0}".format(urllib.unquote(self.__preparation.get('pattern')))
             # ok, lets see what we can do
-            # did you select search files in dir or lines in file?
             if self.__preparation.get('filterFile'):
                 filter_file = self.__preparation.get('filterFile')
                 write_file = self.__preparation.get('writeFile')
@@ -82,42 +81,32 @@ class Task:
                 write_files_found = [name for name in glob.glob(write_file)]
                 if len(filter_files_found) < 1:
                     raise InvalidFileDirectory('Task - Files were not found matching {0}.'.format(filter_file))
+                logging.debug('Task - Found [%s] file(s) to filter using [%s].', str(len(filter_files_found)), str(filter_file))
                 if len(write_files_found) < 1:
                     raise InvalidFileDirectory('Task - Files were not found matching {0}.'.format(write_file))
-                # look matching regex in each line of a file
-                all_matching_lines = []
-                for f_file in filter_files_found:
-                    with open(f_file, "r") as f:
-                        all_matching_lines.extend(re.findall(pattern, f.read(), re.MULTILINE))
-                        f.close()
-
-                # look matching regex in each line of each file
-                for w_file in write_files_found:
-                    for line in filter(None, all_matching_lines):
-                        new_file = w_file
-                        if copy:
-                            # create a copy of the file with the same name plus
-                            new_file = \
-                                '{0}-{1}-{2}'.format(self.name, util.short_unique_id(),
-                                                     os.path.basename(w_file))
-                            shutil.copy2(w_file, new_file)
-
-                        # get commands to execute
-                        sub_task = SubTask(self)
-                        for command in self.__commands:
-                            # replace placeholder with actual created file
-                            sub_task.add_command(command.replace('$file', new_file).replace('$line', line))
-                        self.sub_tasks.append(sub_task)
-
-                        # look in side the new file for the placeholder and replace it
-                        with codecs.open(new_file, 'r', encoding='utf8') as fw:
-                            text = fw.read()
-                            fw.close()
-                        text = text.replace(placeholder, str(line))
-                        with codecs.open(new_file, 'w', encoding='utf8') as fw:
-                            fw.write(text)
-                            fw.close()
-
+                logging.debug('Task - Found [%s] file(s) to write using [%s].', str(len(write_files_found)), str(write_file))
+                # ok, it seems we have a pattern, so we should look inside each file
+                if pattern:
+                    # look matching regex in each line of a file
+                    all_matching_lines = self.__find_in_files(filter_files_found, pattern)
+                    logging.debug('Task - Found [%s] matching result(s) using [%s].', str(len(all_matching_lines)), str(pattern))
+                    # look matching regex in each line of each file
+                    for w_file in write_files_found:
+                        for line in filter(None, all_matching_lines):
+                            new_file = w_file
+                            if copy:
+                                # create a copy of the file with the same name plus
+                                new_file = self.__create_copy(w_file)
+    
+                            # get commands to execute
+                            self.sub_tasks.append(self.__replace_in_commands(new_file, line))
+    
+                            # look in side the new file for the placeholder and replace it
+                            self.__replace_in_file(new_file, placeholder, line)
+                else:
+                    # seems you just want to filter files, lets replace them in the commands
+                    for f_file in filter_files_found:
+                         self.sub_tasks.append(self.__replace_in_commands(f_file, f_file))
             else:
                 raise Exception('Task - Oops this shouldn\'t happen!')
 
@@ -125,8 +114,61 @@ class Task:
             sub_task = SubTask(self)
             sub_task.add_commands(self.__commands)
             self.sub_tasks.append(sub_task)
-
+        logging.debug('Task - This Task has been splitted in [%s] Sub Task(s).', str(len(self.sub_tasks)))
         return self.sub_tasks
+
+    """
+        Utility method to copy files
+        
+        Returns the file name of the new file copied
+    """
+
+    def __create_copy(self, file):
+        new_filename = '{0}-{1}-{2}'.format(self.name, util.short_unique_id(), os.path.basename(file))
+        shutil.copy2(file, new_filename)
+        return new_filename
+        
+    """
+        Utility method to find certain pattern in a set of files
+        
+        Returns all matching results
+    """
+    
+    def __find_in_files(self, files, pattern):
+        all_matching_lines = []
+        for file in files:
+            with open(file, "r") as f:
+                all_matching_lines.extend(re.findall(pattern, f.read(), re.MULTILINE))
+                f.close()
+        return all_matching_lines
+    
+    """
+        Utility method to generate sub tasks
+        
+        Returns the new SubTask
+    """
+    
+    def __replace_in_commands(self, file, line=''):
+        sub_task = SubTask(self)
+        for command in self.__commands:
+            # replace placeholder with actual created file
+            sub_task.add_command(command.replace('$file', file).replace('$line', line))
+        return sub_task
+    
+    """
+        Utility method to replace a placeholder with a value in a file
+    """
+    
+    def __replace_in_file(self, file, placeholder, value):
+        # look in side the new file for the placeholder and replace it
+        with codecs.open(file, 'r', encoding='utf8') as fr:
+            text = fr.read()
+            fr.close()
+        # replace placeholder
+        text = text.replace(placeholder, str(value))
+        with codecs.open(file, 'w', encoding='utf8') as fw:
+            fw.write(text)
+            fw.close()
 
     """
         Get Guidance Tasks
