@@ -107,11 +107,11 @@ Job Diagram
 
 There are 3 TestCases. These Test Cases can be viewed on [Travis CI](https://travis-ci.org/mcmartins/broccoli)
 
-* Basic example from the course examples;
+* Basic example using bash commands - for generic purposes;
 
-* Example with guidance;
+* Example with guidance - hierarchical execution of commands;
 
-* Example with preparation;
+* Example with preparation - prepare input for processing, from previous output;
 
 # Online Input Editor
 
