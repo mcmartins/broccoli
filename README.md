@@ -41,53 +41,50 @@ An example of an input would be something like:
 
 ```json
 {
-  "jobName": "Job1",
-  "jobDescription": "Job1 Description",
-  "workingDir": "/tmp",
-  "timeout": 100,
-  "tasks": [{
-    "taskName": "T1",
-    "taskDescription": "T1 Description",
-    "wait": false,
-    "commands": [
-      "prover9 -f Axioms.in > Axioms.out"
-    ],
-    "children": [{
-      "taskName": "T1.1",
-      "taskDescription": "T1.1 Description",
+  "jobName": "Consequences",
+  "jobDescription": "Search for new Theories.",
+  "workingDir": "/tmp/autonomous",
+  "timeout": 10000,
+  "tasks": [
+    {
+      "taskName": "T1",
+      "taskDescription": "Generate Consequences from a predefined Theory.",
       "wait": false,
-      "preparation": {
-        "filterFile": "Axioms.out",
-        "pattern": "^given.*?T.*?:\\s*\\d+([^.\\#]*.)",
-        "writeFile": "New_Axioms.in",
-        "placeholder": "$placeholder",
-        "copy": true
-      },
+      "failTolerant": true,
       "commands": [
-        "prover9 -f $file > $file_prover.out",
-        "mace4 -f $file > $file_mace.out"
+        "../LADR-2009-11A/bin/prover9 -f Theory.in > Consequences.out"
+      ],
+      "children": [
+        {
+          "taskName": "T1.1",
+          "taskDescription": "For each consequence found, replace in original Theory and Run prover/mace to find new Theories.",
+          "wait": false,
+          "failTolerant": true,
+          "preparation": {
+            "filterFile": "Consequences.out",
+            "pattern": "^given.*?T.*?:\\s*\\d+([^.\\#]*.)",
+            "writeFile": "New-Theory-*.in",
+            "placeholder": "$placeholder",
+            "copy": true
+          },
+          "commands": [
+            "../LADR-2009-11A/bin/prover9 -f $file > $file_prover.out",
+            "../LADR-2009-11A/bin/mace4 -f $file > $file_mace.out"
+          ],
+          "children": [
+            {
+              "taskName": "T1.1.1",
+              "taskDescription": "For each Prover9/Mace4 output check for proofs found.",
+              "wait": false,
+              "commands": [
+                "grep -rl PROVED --exclude='*.json' --exclude='*.log' . && echo 'New Theories Found.' || echo 'No new Theories Found.'"
+              ]
+            }
+          ]
+        }
       ]
-    }, {
-      "taskName": "T1.2",
-      "taskDescription": "T1.2 Description",
-      "wait": false,
-      "preparation": {
-        "searchDirectory": "/fancy_dir",
-        "pattern": "*.in"
-      },
-      "commands": [
-        "prover9 -f $file > $file_prover.out",
-        "mace4 -f $file > $file_mace.out"
-      ]
-    }]
-  }, {
-    "taskName": "T2",
-    "taskDescription": "T2 Description",
-    "wait": false,
-    "commands": [
-      "prover9 -f Axioms.in > Axioms.out"
-    ]
-  }]
+    }
+  ]
 }
 ```
 
