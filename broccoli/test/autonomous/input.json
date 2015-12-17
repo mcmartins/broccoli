@@ -20,7 +20,7 @@
           "failTolerant": true,
           "preparation": {
             "filterFile": "Consequences.out",
-            "pattern": "^given.*?T.*?:\\s*\\d+([^.\\#]*.)",
+            "pattern": "^given.*?.*?:\\s*\\d+([^.\\#]*.)",
             "writeFile": "New-Theory-*.in",
             "placeholder": "$placeholder",
             "copy": true
