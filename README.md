@@ -30,7 +30,7 @@ The input JSON includes the following information:
  5. List of Tasks that constitute the Job
 
 * For each Task:
- 1. Name o identify the Task
+ 1. Name to identify the Task
  2. Description to best describe the Task
  3. Preparation step where the user can define what to do before running the commands in the form of Sub Tasks
  4. Command the actual command to execute and accomplish the Task
