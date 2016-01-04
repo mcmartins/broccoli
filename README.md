@@ -8,6 +8,8 @@
 
 # README
 
+Broccoli is a concurrent Job executor. It allows an user to save time and money when running concurrent software on HPC, e.g. when looking for a proof or counterproof for a theory, the first Task that finishes will kill the other Task saving CPU resources.
+
 This tool handles Jobs. A Job is constituted by a set of Tasks.
 Each Task has Children Tasks and so on.
 Top Level Tasks will run in parallel and Children Tasks will follow as soon parent Tasks finishes.
@@ -87,6 +89,8 @@ An example of an input would be something like:
   ]
 }
 ```
+
+This input will look for equivalent theories by replacing Concequences in the original Theory. It will run 2 commands in parallel and if a proof or counterproof is found, the other command will be killed. It will do this for each Consequence.
 
 ## Integration with WebGAP
 
