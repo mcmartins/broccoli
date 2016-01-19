@@ -29,12 +29,12 @@ def short_unique_id():
 """
 
 
-def kill_process(process):
+def kill_process(pid):
     try:
-        os.kill(process, signal.SIGTERM)
-        logging.debug('Util - Process with pid [%s] Killed.', str(process))
+        os.kill(pid, signal.SIGTERM)
+        logging.debug('Util - Process with pid [%s] Killed.', str(pid))
     except OSError:
-        logging.debug('Util - Process with pid [%s] is not present, cannot be killed. Skipping...', str(process))
+        logging.debug('Util - Process with pid [%s] is not present, cannot be killed. Skipping...', str(pid))
 
 
 """
@@ -42,7 +42,7 @@ def kill_process(process):
 """
 
 
-def print_output(std_err, std_out):
+def print_output(std_err=None, std_out=None):
     if std_err:
         logging.debug('Util - Standard error (stderr):\n%s', str(std_err))
     if std_out:
