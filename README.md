@@ -10,7 +10,7 @@
 
 Broccoli is a concurrent Job executor. It allows an user to save time and money when running concurrent software on HPC.
 
-## Assumpptions
+## Assumptions
 
 1. A user has a long process to run</br>
 1a. A user has a sequence of processes to run</br>
@@ -19,7 +19,11 @@ Broccoli is a concurrent Job executor. It allows an user to save time and money 
 
 ## Use Cases
 
-A user is writing a new paper on a new theory. He needs to test his theory by finding a proof or counter proof. The user can simply run prover9 and mace4 for this. He can execute his theory within the prover9 and try to find a counter proof on mace4 at the same time, in parallel, by executing the two proceses. The processing may take days running and uses a fair amount of resources, so he is using a rented cloud HPC infrastructure. By taking an uncertain amount of time, these processes, and in order to save resources (and thus money), the user can simply configure *broccoli* for running these tasks in parallel. *Broccoli* will ensure that when a proof or counter proof is found, e.g. the first Task that finishes with success, all tasks started for the study are cancelled/killed/stoped in order to save computing resources.
+This section will introduce the use cases for *Broccoli*.
+
+### Run 2 parallel Tasks
+
+A user is writing a new paper on a new theory. He needs to test his theory by finding a proof or counter proof. To do this, the user runs prover9 and mace4 in parallel. </br>He can test his theory within the prover9 and try to find a counter proof on mace4 at the same time, in parallel, by executing the two proceses. The processing may take days running and uses a fair amount of resources, so he is using a rented cloud HPC infrastructure. By taking an uncertain amount of time and in order to save resources, and thus money, the user configures *broccoli* for running these tasks in parallel. *Broccoli* will ensure that when a proof or counter proof is found, e.g. the first Task that finishes with success, all tasks started for the study are cancelled/killed/stoped in order to save computing resources. If no process reaches a conclusion, it will stop after a configurable timeout parameter. The user writes the inputs for prover9 and mace4 and configures *broccoli*. </br>The *broccoli* input looks like:
 
 ```json
 {
@@ -34,8 +38,8 @@ A user is writing a new paper on a new theory. He needs to test his theory by fi
       "wait": false,
       "failTolerant": false,
       "commands": [
-        "prover9 -f Input.p9 > Prover.out",
-        "mace4 -f Input.m4 > Mace.out"
+        "prover9 -f Input.in > Prover.out",
+        "mace4 -f Input.in > Mace.out"
       ],
       "children": [
         {
