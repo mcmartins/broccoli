@@ -8,15 +8,59 @@
 
 # README
 
-Broccoli is a concurrent Job executor. It allows an user to save time and money when running concurrent software on HPC, e.g. when looking for a proof or counterproof for a theory, the first Task that finishes will kill the other Task saving CPU resources.
+Broccoli is a concurrent Job executor. It allows an user to save time and money when running concurrent software on HPC.
+
+## Assumpptions
+
+1. A user has a long process to run</br>
+1a. A user has a sequence of processes to run</br>
+2. A user runs it on a rented platform</br>
+2a. Costs are based on a per resources usage
+
+## Use Cases
+
+A user is writing a new paper on a new theory. He needs to test his theory by finding a proof or counter proof. The user can simply run prover9 and mace4 for this. He can execute his theory within the prover9 and try to find a counter proof on mace4 at the same time, in parallel, by executing the two proceses. The processing may take days running and uses a fair amount of resources, so he is using a rented cloud HPC infrastructure. By taking an uncertain amount of time, these processes, and in order to save resources (and thus money), the user can simply configure *broccoli* for running these tasks in parallel. *Broccoli* will ensure that when a proof or counter proof is found, e.g. the first Task that finishes with success, all tasks started for the study are cancelled/killed/stoped in order to save computing resources.
+
+```json
+{
+  "jobName": "MyFirstBroccoli",
+  "jobDescription": "Search for a proof or counter proof for my new theory.",
+  "workingDir": "/tmp/",
+  "timeout": 259200,
+  "tasks": [
+    {
+      "taskName": "T1",
+      "taskDescription": "Generate Consequences from a predefined Theory.",
+      "wait": false,
+      "failTolerant": false,
+      "commands": [
+        "prover9 -f Input.p9 > Prover.out",
+        "mace4 -f Input.m4 > Mace.out"
+      ],
+      "children": [
+        {
+          "taskName": "T1.1.1",
+          "taskDescription": "For each Prover9/Mace4 output check for proofs found and notify PI.",
+          "wait": false,
+          "commands": [
+            "for file in `grep -rl PROVED --exclude='*.json' --exclude='*.log' .`; do sendmail user@example.com  < $file; done"
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+# API
+
+## Description
 
 This tool handles Jobs. A Job is constituted by a set of Tasks.
 Each Task has Children Tasks and so on.
 Top Level Tasks will run in parallel and Children Tasks will follow as soon parent Tasks finishes.
 The processing finishes when one top level Task finishes executing (including, if any, all its Children Tasks).
 Each Task might need preparation, so Tasks are resolved into Sub Tasks before execution. 
-
-# API
 
 This tool accepts as input a JSON String/File, parses it and starts the processing.
 
@@ -109,13 +153,7 @@ Job Diagram
 
 # Tests
 
-There are 3 TestCases. These Test Cases can be viewed on [Travis CI](https://travis-ci.org/mcmartins/broccoli)
-
-* Basic example using bash commands - for generic purposes;
-
-* Example with guidance - hierarchical execution of commands;
-
-* Example with preparation - prepare input for processing, from previous output;
+These Test Cases can be viewed on [Tests Source](https://github.com/mcmartins/broccoli/tree/master/broccoli/test) / [Travis CI](https://travis-ci.org/mcmartins/broccoli)
 
 # Online Input Editor
 
